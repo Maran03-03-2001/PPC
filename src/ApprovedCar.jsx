@@ -918,6 +918,8 @@ const ApprovedCar = () => {
               <th>Set PPCID Status</th>
               <th>Set PPCID Assigned Date</th>
               <th>Set PPCID Assigned PhoneNumber</th>
+              <th>Bill No</th>
+              <th>Bill Type</th>
               <th>Plan Name</th>
               <th>Plan Type</th>
               <th>Plan Created</th>
@@ -946,7 +948,7 @@ const ApprovedCar = () => {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan="25" className="text-center">
+                <td colSpan="45" className="text-center">
                   No properties found.
                 </td>
               </tr>
@@ -974,9 +976,7 @@ const ApprovedCar = () => {
                   </td>
                   <td
                     className="sticky-col sticky-col-1"
-                    style={{
-                      cursor: "pointer",
-                    }}
+                    style={{ cursor: "pointer" }}
                     onClick={() =>
                       navigate("/dashboard/detail", {
                         state: {
@@ -1012,13 +1012,14 @@ const ApprovedCar = () => {
                   <td>{prop.required}</td>
                   <td>{prop.status}</td>
                   <td>{prop.setPpcId ? "True" : "False"}</td>
-                  <td>{prop.assignedPhoneNumber || "N/A"}</td>
                   <td>
                     {prop.setPpcIdAssignedAt
                       ? new Date(prop.setPpcIdAssignedAt).toLocaleDateString()
                       : "N/A"}
                   </td>
-
+                  <td>{prop.assignedPhoneNumber || "N/A"}</td>
+                  <td>{prop.bill_number || "N/A"}</td>
+                  <td>{prop.billing_type || "N/A"}</td>
                   <td>{prop.planName}</td>
                   <td>{prop.packageType}</td>
                   <td>{new Date(prop.planCreatedAt).toLocaleDateString()}</td>
@@ -1082,7 +1083,6 @@ const ApprovedCar = () => {
                       </>
                     )}
                   </td>
-
                   <td>
                     <button
                       className="text-primary"
@@ -1124,7 +1124,6 @@ const ApprovedCar = () => {
                   <td>{prop.validity}</td>
                   <td>{prop.billExpiryDate}</td>
                   <td>
-                    {" "}
                     <Button
                       variant="secondary"
                       size="sm"
@@ -1140,8 +1139,7 @@ const ApprovedCar = () => {
           </tbody>
         </Table>
       </div>
-
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
