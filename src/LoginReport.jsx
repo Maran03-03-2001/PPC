@@ -161,7 +161,10 @@ const LoginReportTable = () => {
       (start && end && loginMoment.isBetween(start, end, null, "[]"));
 
     const matchesOtpStatus =
-      otpStatusFilter === "all" || user.otpStatus === otpStatusFilter;
+      otpStatusFilter === "all" ||
+      (user.otpStatus &&
+        user.otpStatus.toLowerCase().trim() ===
+          otpStatusFilter.toLowerCase().trim());
 
     const matchesLoginMode =
       loginModeFilter === "all" || user.loginMode === loginModeFilter;
