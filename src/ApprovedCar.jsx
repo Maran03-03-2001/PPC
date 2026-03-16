@@ -475,7 +475,7 @@ const ApprovedCar = () => {
 
       // If moved to preapproved, navigate to Preapproved page and pass ppcId to clear followup/bill
       if (backendStatus === "complete") {
-        navigate("/dashboard/pre-approved-car", {
+        navigate("/dashboard/preapproved-car", {
           state: { clearedPpcIds: [movedPpcId] },
         });
       }

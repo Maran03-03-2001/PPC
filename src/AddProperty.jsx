@@ -1,462 +1,523 @@
-
-
-
-
-
-
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RiLayoutLine } from 'react-icons/ri';
-import { TbArrowLeftRight, TbMapPinCode, TbWorldLongitude } from 'react-icons/tb';
-import {  FaBath, FaChartArea, FaPhone ,FaEdit, FaHome, FaUserAlt, FaEnvelope,  FaRupeeSign , FaFileVideo , FaToilet,FaCar,FaBed,  FaCity , FaTimes} from 'react-icons/fa';
-import {  FaRegAddressCard } from 'react-icons/fa6';
-import { MdLocationOn, MdOutlineMeetingRoom, MdOutlineOtherHouses, MdSchedule , MdStraighten , MdApproval, MdLocationCity , MdAddPhotoAlternate, MdOutlineClose} from "react-icons/md";
-import { BsBank, BsBuildingsFill, BsFillHouseCheckFill , BsTextareaT} from "react-icons/bs";
-import { GiKitchenScale, GiMoneyStack , GiResize , GiGears} from "react-icons/gi";
+import { RiLayoutLine } from "react-icons/ri";
+import {
+  TbArrowLeftRight,
+  TbMapPinCode,
+  TbWorldLongitude,
+} from "react-icons/tb";
+import {
+  FaBath,
+  FaChartArea,
+  FaPhone,
+  FaEdit,
+  FaHome,
+  FaUserAlt,
+  FaEnvelope,
+  FaRupeeSign,
+  FaFileVideo,
+  FaToilet,
+  FaCar,
+  FaBed,
+  FaCity,
+  FaTimes,
+} from "react-icons/fa";
+import { FaRegAddressCard } from "react-icons/fa6";
+import {
+  MdLocationOn,
+  MdOutlineMeetingRoom,
+  MdOutlineOtherHouses,
+  MdSchedule,
+  MdStraighten,
+  MdApproval,
+  MdLocationCity,
+  MdAddPhotoAlternate,
+  MdOutlineClose,
+} from "react-icons/md";
+import {
+  BsBank,
+  BsBuildingsFill,
+  BsFillHouseCheckFill,
+  BsTextareaT,
+} from "react-icons/bs";
+import {
+  GiKitchenScale,
+  GiMoneyStack,
+  GiResize,
+  GiGears,
+} from "react-icons/gi";
 import { HiUserGroup } from "react-icons/hi";
-import { BiBuildingHouse , BiWorld} from "react-icons/bi";
+import { BiBuildingHouse, BiWorld } from "react-icons/bi";
 import { IoCloseCircle } from "react-icons/io5";
 import moment from "moment";
 import { useSelector } from "react-redux";
-import { compressImage, compressVideo } from './utils/compressionUtils';
-import { ImageLoadingOverlay, VideoLoadingOverlay } from './utils/LoadingOverlay';
-import { toWords } from 'number-to-words';
+import { toWords } from "number-to-words";
 import { FcSearch } from "react-icons/fc";
-import { toast } from "react-toastify";
-import { PropertyUploadSection } from './components/PropertyUploadSection';
-
 
 function AddProperty() {
   const location = useLocation();
-   const [ppcId, setPpcId] = useState(location.state?.ppcId || ""); 
-    const [selectedFiles, setSelectedFiles] = useState([]); // Store selected files
-    const [processingPhotoIndices, setProcessingPhotoIndices] = useState([]);
-    const [processingVideoIndices, setProcessingVideoIndices] = useState([]);
-    const [isCompressing, setIsCompressing] = useState(false);
-    const [photoProgress, setPhotoProgress] = useState({});
-    const [videoProgress, setVideoProgress] = useState({});
+  const [ppcId, setPpcId] = useState(location.state?.ppcId || "");
+  const [selectedFiles, setSelectedFiles] = useState([]); // Store selected files
 
-      const inputRef = useRef(null);
-          const latRef = useRef(null);
-          const lngRef = useRef(null);
-          const mapRef = useRef(null);
-          const mapInstance = useRef(null);
-          const markerRef = useRef(null);
-                  const coordRef = useRef(null);
+  const inputRef = useRef(null);
+  const latRef = useRef(null);
+  const lngRef = useRef(null);
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markerRef = useRef(null);
+  const coordRef = useRef(null);
 
-           const [priceInWords, setPriceInWords] = useState("");
-          const [saveNotice, setSaveNotice] = useState("");
+  const [priceInWords, setPriceInWords] = useState("");
 
   const [formData, setFormData] = useState({
-     propertyMode: '',
-    propertyType: '',
-    price: '',
-    priceData: '',
-    propertyAge: '',
-    bankLoan: '',
-    negotiation: '',
-    length: '',
-    breadth: '',
-    totalArea: '',
-    ownership: '',
-    bedrooms: '',
-    kitchen: '',
-     balconies: '',
-    floorNo: '',
-    areaUnit: '',
-    propertyApproved: '',
-    postedBy: '',
-    facing: '',
-    salesMode: '',
-    salesType: '',
-    description: '',
-    furnished: '',
-    lift: '',
-    attachedBathrooms: '',
-    western: '',
-    numberOfFloors: '',
-    carParking: '',
-     country: '',
-    state: '',
-    city: '',
-    district: '',
-    area: '',
-    streetName: '',
-    doorNumber: '',
-    nagar: '',
-    ownerName: '',
-    email: '',
+    propertyMode: "",
+    propertyType: "",
+    price: "",
+    priceData: "",
+    propertyAge: "",
+    bankLoan: "",
+    negotiation: "",
+    length: "",
+    breadth: "",
+    totalArea: "",
+    ownership: "",
+    bedrooms: "",
+    kitchen: "",
+    balconies: "",
+    floorNo: "",
+    areaUnit: "",
+    propertyApproved: "",
+    postedBy: "",
+    facing: "",
+    salesMode: "",
+    salesType: "",
+    description: "",
+    furnished: "",
+    lift: "",
+    attachedBathrooms: "",
+    western: "",
+    numberOfFloors: "",
+    carParking: "",
+    country: "",
+    state: "",
+    city: "",
+    district: "",
+    area: "",
+    streetName: "",
+    doorNumber: "",
+    nagar: "",
+    ownerName: "",
+    email: "",
     phoneNumber: "",
-  phoneNumberCountryCode: "",
-  alternatePhone: "",
-  alternatePhoneCountryCode: "",
-    bestTimeToCall: '',
+    phoneNumberCountryCode: "",
+    alternatePhone: "",
+    alternatePhoneCountryCode: "",
+    bestTimeToCall: "",
     pinCode: "",
-   locationCoordinates:''
-
+    locationCoordinates: "",
   });
   const [photos, setPhotos] = useState([]);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [video, setVideo] = useState(null);
-const [coordinateInput, setCoordinateInput] = useState('');
-const [videos, setVideos] = useState([]);
+  const [coordinateInput, setCoordinateInput] = useState("");
+  const [videos, setVideos] = useState([]);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  const [uploadingVideos, setUploadingVideos] = useState(false);
 
   useEffect(() => {
     if (!window.google) return;
-  
+
     const interval = setInterval(() => {
       if (mapRef.current && inputRef.current) {
         clearInterval(interval);
-  
+
         const map = new window.google.maps.Map(mapRef.current, {
           center: { lat: 11.9416, lng: 79.8083 },
           zoom: 10,
         });
-  
+
         mapInstance.current = map;
-       // ✅ Add click listener on the map
-      const geocoder = new window.google.maps.Geocoder();
-      map.addListener("click", (e) => {
-        const lat = e.latLng.lat();
-        const lng = e.latLng.lng();
+        // ✅ Add click listener on the map
+        const geocoder = new window.google.maps.Geocoder();
+        map.addListener("click", (e) => {
+          const lat = e.latLng.lat();
+          const lng = e.latLng.lng();
 
-        updateMap(lat, lng); // optional: show marker
+          updateMap(lat, lng); // optional: show marker
 
-        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-          if (status === "OK" && results[0]) {
-            const place = results[0];
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              const place = results[0];
 
-            const getComponent = (type) => {
-              const comp = place.address_components?.find(c => c.types.includes(type));
-              return comp?.long_name || '';
-            };
+              const getComponent = (type) => {
+                const comp = place.address_components?.find((c) =>
+                  c.types.includes(type),
+                );
+                return comp?.long_name || "";
+              };
 
-            setFormData(prev => ({
-              ...prev,
-               latitude: lat,
-              longitude: lng,
-              pinCode: getComponent("postal_code"),
-              city: getComponent("sublocality_level_1"),
-              area: getComponent("sublocality_level_2"),
-              nagar: getComponent("sublocality"),
-              streetName: getComponent("route") || getComponent("premise"),
-              district: getComponent("administrative_area_level_2") || getComponent("locality"),
-              state: getComponent("administrative_area_level_1"),
-              country: getComponent("country"),
-              doorNumber: getComponent("street_number"),
-                     locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`, // ✅ Add this
- }));
-          }
+              setFormData((prev) => ({
+                ...prev,
+                latitude: lat,
+                longitude: lng,
+                pinCode: getComponent("postal_code"),
+                city: getComponent("sublocality_level_1"),
+                area: getComponent("sublocality_level_2"),
+                nagar: getComponent("sublocality"),
+                streetName: getComponent("route") || getComponent("premise"),
+                district:
+                  getComponent("administrative_area_level_2") ||
+                  getComponent("locality"),
+                state: getComponent("administrative_area_level_1"),
+                country: getComponent("country"),
+                doorNumber: getComponent("street_number"),
+                locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`, // ✅ Add this
+              }));
+            }
+          });
         });
-      });
 
-        const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
-          types: ['geocode'],
-        });
-  
-        autocomplete.bindTo('bounds', map);
-  
-        autocomplete.addListener('place_changed', () => {
+        const autocomplete = new window.google.maps.places.Autocomplete(
+          inputRef.current,
+          {
+            types: ["geocode"],
+          },
+        );
+
+        autocomplete.bindTo("bounds", map);
+
+        autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
           if (!place.geometry || !place.geometry.location) return;
-  
+
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
-  
+
           updateMap(lat, lng);
-  
+
           const getComponent = (type) => {
-            const comp = place.address_components?.find(c => c.types.includes(type));
-            return comp?.long_name || '';
+            const comp = place.address_components?.find((c) =>
+              c.types.includes(type),
+            );
+            return comp?.long_name || "";
           };
-  
-          setFormData(prev => ({
+
+          setFormData((prev) => ({
             ...prev,
-             latitude: lat,
+            latitude: lat,
             longitude: lng,
             pinCode: getComponent("postal_code"),
-            city: getComponent("locality") || getComponent("administrative_area_level_2"),
-            area: getComponent("sublocality") || getComponent("sublocality_level_1"),
+            city:
+              getComponent("locality") ||
+              getComponent("administrative_area_level_2"),
+            area:
+              getComponent("sublocality") ||
+              getComponent("sublocality_level_1"),
             streetName: getComponent("route") || getComponent("premise"),
             district: getComponent("administrative_area_level_2"),
             state: getComponent("administrative_area_level_1"),
             country: getComponent("country"),
             doorNumber: getComponent("street_number"), // ✅ added here
-          locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`, // ✅ Add this
-
+            locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`, // ✅ Add this
           }));
         });
       }
     }, 100);
-  
+
     return () => clearInterval(interval);
-  }, []); 
+  }, []);
 
-const updateMap = (lat, lng) => {
-  const map = mapInstance.current;
-  if (!map) return;
+  const updateMap = (lat, lng) => {
+    const map = mapInstance.current;
+    if (!map) return;
 
-  map.setCenter({ lat, lng });
-  map.setZoom(12);
+    map.setCenter({ lat, lng });
+    map.setZoom(12);
 
-  const position = { lat, lng };
+    const position = { lat, lng };
 
-  const geocoder = new window.google.maps.Geocoder();
+    const geocoder = new window.google.maps.Geocoder();
 
-  if (markerRef.current) {
-    markerRef.current.setPosition(position);
-  } else {
-    markerRef.current = new window.google.maps.Marker({
-      position,
-      map,
-      draggable: true,
-    });
-
-    // ✅ Listen to dragend event only once when marker is created
-    markerRef.current.addListener('dragend', (e) => {
-      const newLat = e.latLng.lat();
-      const newLng = e.latLng.lng();
-
-      // Update map and form on drag end
-      geocoder.geocode({ location: { lat: newLat, lng: newLng } }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const place = results[0];
-          const getComponent = (type) => {
-            const comp = place.address_components?.find(c => c.types.includes(type));
-            return comp?.long_name || '';
-          };
-
-          setFormData(prev => ({
-            ...prev,
-             latitude: newLat,
-            longitude: newLng,
-            pinCode: getComponent("postal_code"),
-            city: getComponent("sublocality_level_1"),
-            area: getComponent("sublocality_level_2"),
-            nagar: getComponent("sublocality"),
-            streetName: getComponent("route") || getComponent("premise"),
-            district: getComponent("administrative_area_level_2") || getComponent("locality"),
-            state: getComponent("administrative_area_level_1"),
-            country: getComponent("country"),
-            doorNumber: getComponent("street_number"),
-            locationCoordinates: `${newLat.toFixed(6)}° N, ${newLng.toFixed(6)}° E`,
-          }));
-        }
+    if (markerRef.current) {
+      markerRef.current.setPosition(position);
+    } else {
+      markerRef.current = new window.google.maps.Marker({
+        position,
+        map,
+        draggable: true,
       });
-    });
-  }
-};
+
+      // ✅ Listen to dragend event only once when marker is created
+      markerRef.current.addListener("dragend", (e) => {
+        const newLat = e.latLng.lat();
+        const newLng = e.latLng.lng();
+
+        // Update map and form on drag end
+        geocoder.geocode(
+          { location: { lat: newLat, lng: newLng } },
+          (results, status) => {
+            if (status === "OK" && results[0]) {
+              const place = results[0];
+              const getComponent = (type) => {
+                const comp = place.address_components?.find((c) =>
+                  c.types.includes(type),
+                );
+                return comp?.long_name || "";
+              };
+
+              setFormData((prev) => ({
+                ...prev,
+                latitude: newLat,
+                longitude: newLng,
+                pinCode: getComponent("postal_code"),
+                city: getComponent("sublocality_level_1"),
+                area: getComponent("sublocality_level_2"),
+                nagar: getComponent("sublocality"),
+                streetName: getComponent("route") || getComponent("premise"),
+                district:
+                  getComponent("administrative_area_level_2") ||
+                  getComponent("locality"),
+                state: getComponent("administrative_area_level_1"),
+                country: getComponent("country"),
+                doorNumber: getComponent("street_number"),
+                locationCoordinates: `${newLat.toFixed(6)}° N, ${newLng.toFixed(6)}° E`,
+              }));
+            }
+          },
+        );
+      });
+    }
+  };
   const handleLatLngSearch = (e) => {
     e.preventDefault();
 
     const lat = parseFloat(latRef.current.value);
     const lng = parseFloat(lngRef.current.value);
-  
+
     if (!isNaN(lat) && !isNaN(lng)) {
       updateMap(lat, lng);
-  
+
       const geocoder = new window.google.maps.Geocoder();
       const latlng = { lat, lng };
-  
+
       geocoder.geocode({ location: latlng }, (results, status) => {
-        if (status === 'OK' && results[0]) {
+        if (status === "OK" && results[0]) {
           const place = results[0];
-  
+
           const getComponent = (type) => {
-            const comp = place.address_components.find(c => c.types.includes(type));
-            return comp?.long_name || '';
+            const comp = place.address_components.find((c) =>
+              c.types.includes(type),
+            );
+            return comp?.long_name || "";
           };
-  
-          setFormData(prev => ({
+
+          setFormData((prev) => ({
             ...prev,
-             latitude: lat,
+            latitude: lat,
             longitude: lng,
             pinCode: getComponent("postal_code"),
-            city: getComponent("locality") || getComponent("administrative_area_level_3"),
-            area: getComponent("sublocality") || getComponent("sublocality_level_1"),
+            city:
+              getComponent("locality") ||
+              getComponent("administrative_area_level_3"),
+            area:
+              getComponent("sublocality") ||
+              getComponent("sublocality_level_1"),
             streetName: getComponent("route") || getComponent("premise"),
             district: getComponent("administrative_area_level_2"),
             state: getComponent("administrative_area_level_1"),
             country: getComponent("country"),
             doorNumber: getComponent("street_number"), // ✅ added here
-          locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`, // ✅ Add this
-
+            locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`, // ✅ Add this
           }));
         } else {
-          alert('Reverse geocoding failed: ' + status);
+          alert("Reverse geocoding failed: " + status);
         }
       });
     } else {
       alert("Enter valid coordinates");
     }
   };
-const [coordValue, setCoordValue] = useState('');
- 
-const handleLatLngAuto = (input) => {
-  input = input.trim();
+  const [coordValue, setCoordValue] = useState("");
 
-   const matchDecimalDir = input.match(/([-\d.]+)[^\dNS]*([NS]),?\s*([-\d.]+)[^\dEW]*([EW])/i);
+  const handleLatLngAuto = (input) => {
+    input = input.trim();
 
-  let lat, lng;
+    const matchDecimalDir = input.match(
+      /([-\d.]+)[^\dNS]*([NS]),?\s*([-\d.]+)[^\dEW]*([EW])/i,
+    );
 
-  if (matchDecimalDir) {
-    lat = parseFloat(matchDecimalDir[1]);
-    const latDir = matchDecimalDir[2].toUpperCase();
-    lng = parseFloat(matchDecimalDir[3]);
-    const lngDir = matchDecimalDir[4].toUpperCase();
+    let lat, lng;
 
-    if (latDir === "S") lat = -lat;
-    if (lngDir === "W") lng = -lng;
-  } else {
-    // 2. Match DMS (e.g., 11°55'13.3"N 79°47'24.2"E)
-    const dmsRegex = /(\d+)[°:\s](\d+)[\'′:\s](\d+(?:\.\d+)?)[\"\″]?\s*([NS])[^0-9]*(\d+)[°:\s](\d+)[\'′:\s](\d+(?:\.\d+)?)[\"\″]?\s*([EW])/i;
-    const dmsMatch = input.match(dmsRegex);
+    if (matchDecimalDir) {
+      lat = parseFloat(matchDecimalDir[1]);
+      const latDir = matchDecimalDir[2].toUpperCase();
+      lng = parseFloat(matchDecimalDir[3]);
+      const lngDir = matchDecimalDir[4].toUpperCase();
 
-    if (dmsMatch) {
-      const [
-        _full,
-        latDeg, latMin, latSec, latDir,
-        lngDeg, lngMin, lngSec, lngDir
-      ] = dmsMatch;
-
-      lat = dmsToDecimal(+latDeg, +latMin, +latSec, latDir.toUpperCase());
-      lng = dmsToDecimal(+lngDeg, +lngMin, +lngSec, lngDir.toUpperCase());
+      if (latDir === "S") lat = -lat;
+      if (lngDir === "W") lng = -lng;
     } else {
-      // 3. Match plain decimal format: "11.778068, 79.735691"
-      const plainDecimal = input.match(/([-\d.]+)[,\s]+([-\d.]+)/);
-      if (plainDecimal) {
-        lat = parseFloat(plainDecimal[1]);
-        lng = parseFloat(plainDecimal[2]);
+      // 2. Match DMS (e.g., 11°55'13.3"N 79°47'24.2"E)
+      const dmsRegex =
+        /(\d+)[°:\s](\d+)[\'′:\s](\d+(?:\.\d+)?)[\"\″]?\s*([NS])[^0-9]*(\d+)[°:\s](\d+)[\'′:\s](\d+(?:\.\d+)?)[\"\″]?\s*([EW])/i;
+      const dmsMatch = input.match(dmsRegex);
+
+      if (dmsMatch) {
+        const [
+          _full,
+          latDeg,
+          latMin,
+          latSec,
+          latDir,
+          lngDeg,
+          lngMin,
+          lngSec,
+          lngDir,
+        ] = dmsMatch;
+
+        lat = dmsToDecimal(+latDeg, +latMin, +latSec, latDir.toUpperCase());
+        lng = dmsToDecimal(+lngDeg, +lngMin, +lngSec, lngDir.toUpperCase());
       } else {
-        return; // No valid format matched
+        // 3. Match plain decimal format: "11.778068, 79.735691"
+        const plainDecimal = input.match(/([-\d.]+)[,\s]+([-\d.]+)/);
+        if (plainDecimal) {
+          lat = parseFloat(plainDecimal[1]);
+          lng = parseFloat(plainDecimal[2]);
+        } else {
+          return; // No valid format matched
+        }
       }
     }
-  }
 
-  if (!isNaN(lat) && !isNaN(lng)) {
-    updateMap(lat, lng);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      updateMap(lat, lng);
 
-    const geocoder = new window.google.maps.Geocoder();
-    const latlng = { lat, lng };
+      const geocoder = new window.google.maps.Geocoder();
+      const latlng = { lat, lng };
 
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const place = results[0];
+      geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === "OK" && results[0]) {
+          const place = results[0];
 
-        const getComponent = (type) => {
-          const comp = place.address_components.find(c => c.types.includes(type));
-          return comp?.long_name || '';
-        };
+          const getComponent = (type) => {
+            const comp = place.address_components.find((c) =>
+              c.types.includes(type),
+            );
+            return comp?.long_name || "";
+          };
 
-        setFormData(prev => ({
-          ...prev,
-          // rentalPropertyAddress: place.formatted_address,
-          latitude: lat,
-          longitude: lng,
-          pinCode: getComponent("postal_code"),
-          city: getComponent("locality") || getComponent("administrative_area_level_3"),
-          area: getComponent("sublocality") || getComponent("sublocality_level_1"),
-          streetName: getComponent("route") || getComponent("premise"),
-          district: getComponent("administrative_area_level_2"),
-          state: getComponent("administrative_area_level_1"),
-          country: getComponent("country"),
-          doorNumber: getComponent("street_number"),
-          locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`
-        }));
-      }
-    });
-  }
-};
-const dmsToDecimal = (deg, min, sec, direction) => {
-  let decimal = deg + min / 60 + sec / 3600;
-  if (["S", "W"].includes(direction)) decimal = -decimal;
-  return decimal;
-};
-const handleClear = () => {
-  if (coordRef.current) {
-    coordRef.current.value = ''; // Clear the actual input field
-  }
-  setCoordValue(''); // Reset state if needed
-
-  // Reset formData fields
-  setFormData(prev => ({
-    ...prev,
-    // rentalPropertyAddress: '',
-    latitude: '',
-    longitude: '',
-    pinCode: '',
-    city: '',
-    area: '',
-    nagar: '',
-    streetName: '',
-    district: '',
-    state: '',
-    country: '',
-    doorNumber: '',
-        locationCoordinates:'',
-
-  }));
-};
-
-const reduxAdminName = useSelector((state) => state.admin.name);
-const reduxAdminRole = useSelector((state) => state.admin.role);
-
-const adminName = reduxAdminName || localStorage.getItem("adminName");
-const adminRole = reduxAdminRole || localStorage.getItem("adminRole");
-
-const [allowedRoles, setAllowedRoles] = useState([]);
-const [loading, setLoading] = useState(true);
-
-const fileName = "Add Property"; // current file
-
-// Sync Redux to localStorage
-useEffect(() => {
-  if (reduxAdminName) localStorage.setItem("adminName", reduxAdminName);
-  if (reduxAdminRole) localStorage.setItem("adminRole", reduxAdminRole);
-}, [reduxAdminName, reduxAdminRole]);
-
-// Record dashboard view
-useEffect(() => {
-  const recordDashboardView = async () => {
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/record-view`, {
-        userName: adminName,
-        role: adminRole,
-        viewedFile: fileName,
-        viewTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+          setFormData((prev) => ({
+            ...prev,
+            // rentalPropertyAddress: place.formatted_address,
+            latitude: lat,
+            longitude: lng,
+            pinCode: getComponent("postal_code"),
+            city:
+              getComponent("locality") ||
+              getComponent("administrative_area_level_3"),
+            area:
+              getComponent("sublocality") ||
+              getComponent("sublocality_level_1"),
+            streetName: getComponent("route") || getComponent("premise"),
+            district: getComponent("administrative_area_level_2"),
+            state: getComponent("administrative_area_level_1"),
+            country: getComponent("country"),
+            doorNumber: getComponent("street_number"),
+            locationCoordinates: `${lat.toFixed(6)}° N, ${lng.toFixed(6)}° E`,
+          }));
+        }
       });
-    } catch (err) {
     }
   };
-
-  if (adminName && adminRole) {
-    recordDashboardView();
-  }
-}, [adminName, adminRole]);
-
-// Fetch role-based permissions
-useEffect(() => {
-  const fetchPermissions = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/get-role-permissions`);
-      const rolePermissions = res.data.find((perm) => perm.role === adminRole);
-      const viewed = rolePermissions?.viewedFiles?.map(f => f.trim()) || [];
-      setAllowedRoles(viewed);
-    } catch (err) {
-    } finally {
-      setLoading(false);
+  const dmsToDecimal = (deg, min, sec, direction) => {
+    let decimal = deg + min / 60 + sec / 3600;
+    if (["S", "W"].includes(direction)) decimal = -decimal;
+    return decimal;
+  };
+  const handleClear = () => {
+    if (coordRef.current) {
+      coordRef.current.value = ""; // Clear the actual input field
     }
+    setCoordValue(""); // Reset state if needed
+
+    // Reset formData fields
+    setFormData((prev) => ({
+      ...prev,
+      // rentalPropertyAddress: '',
+      latitude: "",
+      longitude: "",
+      pinCode: "",
+      city: "",
+      area: "",
+      nagar: "",
+      streetName: "",
+      district: "",
+      state: "",
+      country: "",
+      doorNumber: "",
+      locationCoordinates: "",
+    }));
   };
 
-  if (adminRole) {
-    fetchPermissions();
-  }
-}, [adminRole]);
+  const reduxAdminName = useSelector((state) => state.admin.name);
+  const reduxAdminRole = useSelector((state) => state.admin.role);
 
+  const adminName = reduxAdminName || localStorage.getItem("adminName");
+  const adminRole = reduxAdminRole || localStorage.getItem("adminRole");
 
+  const [allowedRoles, setAllowedRoles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const fileName = "Add Property"; // current file
+
+  // Sync Redux to localStorage
+  useEffect(() => {
+    if (reduxAdminName) localStorage.setItem("adminName", reduxAdminName);
+    if (reduxAdminRole) localStorage.setItem("adminRole", reduxAdminRole);
+  }, [reduxAdminName, reduxAdminRole]);
+
+  // Record dashboard view
+  useEffect(() => {
+    const recordDashboardView = async () => {
+      try {
+        await axios.post(`${process.env.REACT_APP_API_URL}/record-view`, {
+          userName: adminName,
+          role: adminRole,
+          viewedFile: fileName,
+          viewTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+        });
+      } catch (err) {}
+    };
+
+    if (adminName && adminRole) {
+      recordDashboardView();
+    }
+  }, [adminName, adminRole]);
+
+  // Fetch role-based permissions
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/get-role-permissions`,
+        );
+        const rolePermissions = res.data.find(
+          (perm) => perm.role === adminRole,
+        );
+        const viewed = rolePermissions?.viewedFiles?.map((f) => f.trim()) || [];
+        setAllowedRoles(viewed);
+      } catch (err) {
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (adminRole) {
+      fetchPermissions();
+    }
+  }, [adminRole]);
 
   const [dropdownState, setDropdownState] = useState({
     activeDropdown: null,
@@ -479,1443 +540,1378 @@ useEffect(() => {
 
   // Handle filter input change for dropdown
   const handleFilterChange = (e) => {
-    setDropdownState((prevState) => ({ ...prevState, filterText: e.target.value }));
+    setDropdownState((prevState) => ({
+      ...prevState,
+      filterText: e.target.value,
+    }));
   };
-  
- 
 
   const [countryCodes, setCountryCodes] = useState([
-    { code: '+1', country: 'USA/Canada' },
-    { code: '+44', country: 'UK' },
-    { code: '+91', country: 'India' },
-    { code: '+61', country: 'Australia' },
-    { code: '+81', country: 'Japan' },
-    { code: '+49', country: 'Germany' },
-    { code: '+33', country: 'France' },
-    { code: '+34', country: 'Spain' },
-    { code: '+55', country: 'Brazil' },
-    { code: '+52', country: 'Mexico' },
-    { code: '+86', country: 'China' },
-    { code: '+39', country: 'Italy' },
-    { code: '+7', country: 'Russia/Kazakhstan' },
+    { code: "+1", country: "USA/Canada" },
+    { code: "+44", country: "UK" },
+    { code: "+91", country: "India" },
+    { code: "+61", country: "Australia" },
+    { code: "+81", country: "Japan" },
+    { code: "+49", country: "Germany" },
+    { code: "+33", country: "France" },
+    { code: "+34", country: "Spain" },
+    { code: "+55", country: "Brazil" },
+    { code: "+52", country: "Mexico" },
+    { code: "+86", country: "China" },
+    { code: "+39", country: "Italy" },
+    { code: "+7", country: "Russia/Kazakhstan" },
     // ... other countries
   ]);
   const [alternateCountryCodes, setAlternateCountryCodes] = useState([
-    { code: '+1', country: 'USA/Canada' },
-    { code: '+44', country: 'UK' },
-    { code: '+91', country: 'India' },
-    { code: '+61', country: 'Australia' },
-    { code: '+81', country: 'Japan' },
-    { code: '+49', country: 'Germany' },
-    { code: '+33', country: 'France' },
-    { code: '+34', country: 'Spain' },
-    { code: '+55', country: 'Brazil' },
-    { code: '+52', country: 'Mexico' },
-    { code: '+86', country: 'China' },
-    { code: '+39', country: 'Italy' },
-    { code: '+7', country: 'Russia/Kazakhstan' },
+    { code: "+1", country: "USA/Canada" },
+    { code: "+44", country: "UK" },
+    { code: "+91", country: "India" },
+    { code: "+61", country: "Australia" },
+    { code: "+81", country: "Japan" },
+    { code: "+49", country: "Germany" },
+    { code: "+33", country: "France" },
+    { code: "+34", country: "Spain" },
+    { code: "+55", country: "Brazil" },
+    { code: "+52", country: "Mexico" },
+    { code: "+86", country: "China" },
+    { code: "+39", country: "Italy" },
+    { code: "+7", country: "Russia/Kazakhstan" },
   ]);
 
-  // Area to Pincode mapping for Pondicherry
-  const areaPincodeMap = {
-    "Abishegapakkam": "605007",
-    "Ariyankuppam": "605007",
-    "Arumbarthapuram" : "605110",
-    "Bahour": "605101",
-    "Bommaiyarpalayam": "605106",
-    "Cathedral": "605001",
-    "Chinna Kalapet": "605014",
-    "Chinna Veerampatinam": "605007",
-    "Dharmapuri": "605003",
-    "Dupleix Nagar": "605001",
-    "Embalam": "605106",
-    "Heritage Town": "605001",
-    "Iyyanar Koil": "605013",
-    "Jipmer Campus": "605006",
-    "Kadirkamam": "605009",
-    "Kalapet": "605014",
-    "Kanniakoil": "605010",
-    "Karayamputhur": "605106",
-    "Karuvadikuppam": "605008",
-    "Katterikuppam": "605009",
-    "Kirumampakkam": "605502",
-    "Koodapakkam": "605502",
-    "Korkadu": "605501",
-    "Kottakuppam": "605104",
-    "Kottakuppam Puduthurai": "605007",
-    "Kunichempet": "605006",
-    "Kuruvinatham": "605007",
-    "Kurusukuppam": "605012",
-    "Lawspet": "605008",
-    "Madukarai": "605107",
-    "Madagadipet": "605107",
-    "Manalipet": "605010",
-    "Manapattu": "605105",
-    "Mangalam": "605004",
-    "Mannadipet": "605501",
-    "Mettupalayam": "605009",
-    "MG Road": "605001",
-    "Mission Street": "605001",
-    "Moolakulam": "605010",
-    "Mudaliarpet": "605004",
-    "Murungapakkam": "605004",
-    "Nallambal": "605006",
-    "Natesan Nagar": "605005",
-    "Nellithope": "605005",
-    "Olandai Keerapalayam": "605010",
-    "Orleanpet": "605001",
-    "Osudu": "605110",
-    "Ousteri": "605009",
-    "Pillaiyarkuppam (Ariyankuppam)": "605007",
-    "Pillaiyarkuppam (Bahour)": "605101",
-    "Pondicherry University": "605014",
-    "Pudhu Nagar": "605010",
-    "Rainbow Nagar": "605011",
-    "Reddiarpalayam": "605010",
-    "Sanjay Gandhi Nagar": "605005",
-    "Saram": "605013",
-    "Seedhankuppam": "605005",
-    "Seliamedu": "605106",
-    "Sita Nagar": "605013",
-    "Solai Nagar": "605010",
-    "Sri Aurobindo Ashram": "605002",
-    "Subbaiah Salai": "605001",
-    "Sultanpet": "605003",
-    "Thavalakuppam": "605009",
-    "Thengaithittu": "605004",
-    "Thondamanatham": "605502",
-    "Thirubuvanai": "605107",
-    "Thirukanchi": "605009",
-    "Thiruthani": "605006",
-    "Vaithikuppam": "605012",
-    "Vadhanur": "605111",
-    "Veerampattinam": "605007",
-    "Velrampet": "605004",
-    "Villianur": "605110",
-    "White Town": "605001"
-  };
-
-  // Area dropdown states
-  const [areaSuggestions, setAreaSuggestions] = useState([]);
-  const [showAreaSuggestions, setShowAreaSuggestions] = useState(false);
-  
-  
   const [dataList, setDataList] = useState({});
 
   const fetchDropdownData = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/fetch`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/fetch`,
+      );
       const groupedData = response.data.data.reduce((acc, item) => {
         if (!acc[item.field]) acc[item.field] = [];
         acc[item.field].push(item.value);
         return acc;
       }, {});
       setDataList(groupedData);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     fetchDropdownData();
   }, []);
 
-  
- 
-
   const handlePhotoUpload = async (e) => {
-  const files = Array.from(e.target.files);
-  const maxSize = 50 * 1024 * 1024; // 50MB
+    const files = Array.from(e.target.files);
+    const maxSize = 50 * 1024 * 1024; // 10MB
 
-  if (!files.length) return;
+    if (!files.length) return;
 
-  // Check size
-  for (let file of files) {
-    if (file.size > maxSize) {
-      alert("File size exceeds the 50MB limit");
+    // Check size
+    for (let file of files) {
+      if (file.size > maxSize) {
+        alert("File size exceeds the 10MB limit");
+        return;
+      }
+    }
+
+    // Check total photo count
+    if (photos.length + files.length > 15) {
+      alert("Maximum 15 photos can be uploaded.");
       return;
     }
-  }
 
-  // Check total photo count
-  if (photos.length + files.length > 15) {
-    alert("Maximum 15 photos can be uploaded.");
-    return;
-  }
+    setUploadingPhotos(true);
 
-  setIsCompressing(true);
+    const watermarkedImages = await Promise.all(
+      files.map((file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
 
-  const startIndex = photos.length;
-  // Add temporary placeholders so UI shows slots for incoming images
-  const placeholders = files.map((f, i) => new File([new Blob()], `placeholder-${Date.now()}-${i}.png`, { type: 'image/png' }));
-  setPhotos(prev => [...prev, ...placeholders]);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
 
-  // mark processing indices
-  const newProcessing = files.map((_, i) => startIndex + i);
-  setProcessingPhotoIndices((prev) => [...prev, ...newProcessing]);
+              canvas.width = img.width;
+              canvas.height = img.height;
 
-  // Process files sequentially (watermark then compress)
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    try {
-      const watermarked = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            const watermarkText = "PPC Pondy";
-            const fontSize = Math.max(24, Math.floor(canvas.width / 15));
-            ctx.font = `bold ${fontSize}px Arial`;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-            ctx.lineWidth = 4;
-            ctx.strokeText(watermarkText, centerX, centerY);
-            ctx.fillStyle = "rgba(224, 223, 223, 0.9)";
-            ctx.fillText(watermarkText, centerX, centerY);
-            canvas.toBlob((blob) => {
-              const watermarkedFile = new File([blob], file.name, { type: file.type });
-              resolve(watermarkedFile);
-            }, file.type);
+              ctx.drawImage(img, 0, 0);
+
+              // Watermark settings
+              const watermarkText = "PPC Pondy";
+              const fontSize = Math.max(24, Math.floor(canvas.width / 15));
+              ctx.font = `bold ${fontSize}px Arial`;
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+
+              const centerX = canvas.width / 2;
+              const centerY = canvas.height / 2;
+
+              // White outline
+              ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+              ctx.lineWidth = 4;
+              ctx.strokeText(watermarkText, centerX, centerY);
+
+              // Black fill
+              ctx.fillStyle = "rgba(224, 223, 223, 0.9)";
+              ctx.fillText(watermarkText, centerX, centerY);
+
+              canvas.toBlob(
+                (blob) => {
+                  const watermarkedFile = new File([blob], file.name, {
+                    type: file.type,
+                  });
+                  resolve(watermarkedFile);
+                },
+                file.type,
+                0.8,
+              );
+            };
+
+            img.src = event.target.result;
           };
-          img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
 
-      // compress to <=100KB
-      const compressed = await compressImage(watermarked, 100, (progress) => {
-        setPhotoProgress((prev) => ({ ...prev, [startIndex + i]: progress }));
-      });
+          reader.readAsDataURL(file);
+        });
+      }),
+    );
 
-      // replace placeholder with compressed file
-      setPhotos((prev) => {
-        const next = [...prev];
-        next[startIndex + i] = compressed;
-        return next;
-      });
-
-    } catch (err) {
-      console.warn('Error processing image', err);
-    } finally {
-      setProcessingPhotoIndices((prev) => prev.filter((idx) => idx !== startIndex + i));
-    }
-  }
-
-  setSelectedFiles(files);
-  setSelectedPhotoIndex(startIndex);
-  setIsCompressing(false);
-};
+    setPhotos([...photos, ...watermarkedImages]);
+    setSelectedFiles(watermarkedImages);
+    setSelectedPhotoIndex(0);
+    setUploadingPhotos(false);
+  };
   const removePhoto = (index) => {
     setPhotos(photos.filter((_, i) => i !== index));
     if (index === selectedPhotoIndex) {
       setSelectedPhotoIndex(0);
     }
   };
- 
 
   const handleVideoChange = (e) => {
-  const selectedFiles = Array.from(e.target.files);
-  const maxSize = 100 * 1024 * 1024; // 100MB
-  const validFiles = [];
+    const selectedFiles = Array.from(e.target.files);
+    const maxSize = 100 * 1024 * 1024; // 50MB
+    const validFiles = [];
 
-  for (let file of selectedFiles) {
-    if (file.size > maxSize) {
-      alert(`${file.name} exceeds the 100MB size limit.`);
-      continue;
-    }
-    validFiles.push(file);
-  }
-
-  if (!validFiles.length) return;
-
-  // Allow up to 5 videos
-  const startIndex = videos.length;
-  const placeholders = validFiles.map((f, i) => new File([new Blob()], `placeholder-video-${Date.now()}-${i}.mp4`, { type: 'video/mp4' }));
-  setVideos(prev => [...prev, ...placeholders].slice(0,5));
-
-  const newProcessing = validFiles.map((_, i) => startIndex + i);
-  setProcessingVideoIndices((prev) => [...prev, ...newProcessing]);
-
-  // process each video sequentially
-  (async () => {
-    for (let i = 0; i < validFiles.length; i++) {
-      const file = validFiles[i];
-      try {
-        const compressed = await compressVideo(file, 200, (progress) => {
-          setVideoProgress((prev) => ({ ...prev, [startIndex + i]: progress }));
-        });
-        setVideos((prev) => {
-          const next = [...prev];
-          next[startIndex + i] = compressed;
-          return next.slice(0,5);
-        });
-      } catch (err) {
-        console.warn('Video compress error', err);
-      } finally {
-        setProcessingVideoIndices((prev) => prev.filter((idx) => idx !== startIndex + i));
+    for (let file of selectedFiles) {
+      if (file.size > maxSize) {
+        alert(`${file.name} exceeds the 50MB size limit.`);
+        continue;
       }
+      validFiles.push(file);
     }
-  })();
-};
- 
-const removeVideo = (indexToRemove) => {
-  setVideos(prev => prev.filter((_, index) => index !== indexToRemove));
-};
+
+    // Allow up to 5 videos
+    const totalFiles = [...videos, ...validFiles].slice(0, 5);
+    setUploadingVideos(true);
+    setVideos(totalFiles);
+    setUploadingVideos(false);
+  };
+
+  const removeVideo = (indexToRemove) => {
+    setVideos((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
 
   const handlePhotoSelect = (index) => {
     setSelectedPhotoIndex(index);
   };
 
-  // Handle area input change with smart sorting (starting letters first)
-  const handleAreaInputChange = (e) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, area: value }));
-
-    if (value.trim().length > 0) {
-      const allAreas = Object.keys(areaPincodeMap);
-      const lowerValue = value.toLowerCase();
-      
-      // Areas that START with the typed letter (priority)
-      const startsWithFilter = allAreas.filter(a => 
-        a.toLowerCase().startsWith(lowerValue)
-      );
-      
-      // Areas that CONTAIN but don't start with the typed letter
-      const containsFilter = allAreas.filter(a => 
-        !a.toLowerCase().startsWith(lowerValue) && 
-        a.toLowerCase().includes(lowerValue)
-      );
-      
-      // Combine: starting first, then containing
-      const sortedSuggestions = [...startsWithFilter, ...containsFilter];
-      
-      setAreaSuggestions(sortedSuggestions);
-      setShowAreaSuggestions(sortedSuggestions.length > 0);
-    } else {
-      // Show all areas when input is empty but focused
-      setAreaSuggestions(Object.keys(areaPincodeMap));
-      setShowAreaSuggestions(true);
-    }
-  };
-
-  // Handle area selection from dropdown
-  const handleAreaSelect = (selectedArea) => {
-    setFormData(prev => ({
-      ...prev,
-      area: selectedArea,
-      pinCode: areaPincodeMap[selectedArea] || prev.pinCode
-    }));
-    setShowAreaSuggestions(false);
-    setAreaSuggestions([]);
-  };
-
-  // Handle area input focus
-  const handleAreaFocus = () => {
-    if (formData.area.trim().length === 0) {
-      setAreaSuggestions(Object.keys(areaPincodeMap));
-      setShowAreaSuggestions(true);
-    } else {
-      handleAreaInputChange({ target: { value: formData.area } });
-    }
-  };
-
-  // Handle area input blur
-  const handleAreaBlur = () => {
-    // Delay to allow click on suggestion
-    setTimeout(() => {
-      setShowAreaSuggestions(false);
-    }, 200);
-  };
-
-   
-    const convertToIndianRupees = (num) => {
+  const convertToIndianRupees = (num) => {
     const number = parseInt(num, 10);
     if (isNaN(number)) return "";
-  
+
     if (number >= 10000000) {
-      return (number / 10000000).toFixed(2).replace(/\.00$/, '') + " crores";
+      return (number / 10000000).toFixed(2).replace(/\.00$/, "") + " crores";
     } else if (number >= 100000) {
-      return (number / 100000).toFixed(2).replace(/\.00$/, '') + " lakhs";
+      return (number / 100000).toFixed(2).replace(/\.00$/, "") + " lakhs";
     } else {
-      return toWords(number).replace(/\b\w/g, l => l.toUpperCase()) + " rupees";
+      return (
+        toWords(number).replace(/\b\w/g, (l) => l.toUpperCase()) + " rupees"
+      );
     }
   };
 
   const handleFieldChange = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  // If the field is 'price', update priceInWords accordingly
-  if (name === "price") {
-    if (value !== "" && !isNaN(value)) {
-      setPriceInWords(convertToIndianRupees(value));
-    } else {
-      setPriceInWords("");
-    }
-  }
-
-  // Set formData as before, ensuring price is a number
-  setFormData((prevState) => ({
-    ...prevState,
-    [name]: name === "price" ? Number(value) || 0 : value,
-  }));
-};
-
-
-const navigate = useNavigate();
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  // Check mandatory fields but DO NOT block saving
-  const missing = requiredFields.filter((f) => {
-    const v = formData[f];
-    return v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
-  });
-
-  // Decide status according to existing system values
-  // missing -> 'incomplete' (Pending), all present -> 'complete' (Preapproved)
-  const statusToSend = missing.length > 0 ? 'incomplete' : 'complete';
-
-  // Non-blocking informational notice for the user
-  if (missing.length > 0) {
-    setSaveNotice('Mandatory fields are not fully filled. Property saved as Pending.');
-    toast.info('Mandatory fields are not fully filled — you can save now and complete them later. Property saved as Pending.');
-  } else {
-    setSaveNotice('All mandatory fields filled. Property saved as Preapproved.');
-    toast.info('All mandatory fields filled. Property saved as Preapproved.');
-  }
-
-  try {
-    let newPpcId = ppcId; // Use existing PPC-ID if available
-
-    // 🔹 Generate PPC-ID only if it's not already stored
-    if (!newPpcId) {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/store-id`);
-      if (response.status === 201 && response.data.ppcId) {
-        newPpcId = response.data.ppcId;
-        setPpcId(newPpcId);
-        localStorage.setItem("ppcId", newPpcId); // 🔥 Store PPC-ID in localStorage
+    // If the field is 'price', update priceInWords accordingly
+    if (name === "price") {
+      if (value !== "" && !isNaN(value)) {
+        setPriceInWords(convertToIndianRupees(value));
       } else {
-        alert("Failed to generate PPC-ID. Please try again.");
-        return;
+        setPriceInWords("");
       }
     }
 
-    // 🔹 Create FormData instance for file uploads
-    const formDataToSend = new FormData();
+    // Set formData as before, ensuring price is a number
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: name === "price" ? Number(value) || 0 : value,
+    }));
+  };
 
-    // Append PPC-ID (existing or newly generated)
-    formDataToSend.append("ppcId", newPpcId);
+  const navigate = useNavigate();
 
-    // Append all form fields (include empty values) so backend gets explicit fields
-    Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key] === undefined || formData[key] === null ? '' : formData[key]);
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    // Attach status so backend/listings can reuse existing Pending/Preapproved logic
-    formDataToSend.append('status', statusToSend);
+    // Validate required fields
+    const isValid = requiredFields.every(
+      (field) => formData[field] && formData[field].toString().trim() !== "",
+    );
+    if (!isValid) {
+      alert("Please fill all mandatory fields.");
+      return;
+    }
 
-    // Append photos
-    photos.forEach((photo) => {
-      formDataToSend.append("photos", photo);
-    });
+    try {
+      let newPpcId = ppcId; // Use existing PPC-ID if available
 
-    // Append video if available
-   videos.forEach(file => {
-    formDataToSend.append("video", file); // <== field name matches backend multer: 'video'
-  });
+      // 🔹 Generate PPC-ID only if it's not already stored
+      if (!newPpcId) {
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/store-id`,
+        );
+        if (response.status === 201 && response.data.ppcId) {
+          newPpcId = response.data.ppcId;
+          setPpcId(newPpcId);
+          localStorage.setItem("ppcId", newPpcId); // 🔥 Store PPC-ID in localStorage
+        } else {
+          alert("Failed to generate PPC-ID. Please try again.");
+          return;
+        }
+      }
 
-    // Log key details for debugging
-    console.log('Submitting property', { ppcId: newPpcId, photosCount: photos.length, videosCount: videos.length, formData });
+      // 🔹 Create FormData instance for file uploads
+      const formDataToSend = new FormData();
 
-    // 🔹 Submit the property update request (update if PPC-ID exists)
-    const propertyResponse = await axios.post(
-      `${process.env.REACT_APP_API_URL}/update-property`,
-      formDataToSend,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      // Append PPC-ID (existing or newly generated)
+      formDataToSend.append("ppcId", newPpcId);
+
+      // Append status as Complete
+      formDataToSend.append("status", "Complete");
+
+      // Append form fields
+      Object.keys(formData).forEach((key) => {
+        if (formData[key]) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      // Append photos
+      const reorderedPhotos =
+        selectedPhotoIndex >= 0 && selectedPhotoIndex < photos.length
+          ? [
+              photos[selectedPhotoIndex],
+              ...photos.filter((_, i) => i !== selectedPhotoIndex),
+            ]
+          : photos;
+      reorderedPhotos.forEach((photo) => {
+        formDataToSend.append("photos", photo);
+      });
+
+      // Append video if available
+      videos.forEach((file) => {
+        formDataToSend.append("video", file); // <== field name matches backend multer: 'video'
+      });
+
+      // 🔹 Submit the property update request (update if PPC-ID exists)
+      const propertyResponse = await axios.post(
+        `${process.env.REACT_APP_API_URL}/update-property`,
+        formDataToSend,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+
+      alert(propertyResponse.data.message);
+      navigate("/dashboard/preapproved-car");
+    } catch (error) {
+      alert("An error occurred while submitting the property data.");
+    }
+  };
+
+  useEffect(() => {
+    const storedPpcId = localStorage.getItem("ppcId");
+
+    if (!storedPpcId) {
+      localStorage.removeItem("ppcId"); // Reset PPC-ID when user leaves and returns
+    }
+  }, []);
+
+  const fieldIcons = {
+    // Contact Details
+    phoneNumber: <FaPhone color="#2F747F" />,
+    alternatePhone: <FaPhone color="#2F747F" />,
+    email: <FaEnvelope color="#2F747F" />,
+    bestTimeToCall: <MdSchedule color="#2F747F" />,
+
+    // Property Location
+    // rentalPropertyAddress: <MdLocationCity color="#2F747F" />,
+    country: <BiWorld color="#2F747F" />,
+    state: <MdLocationCity color="#2F747F" />,
+    city: <FaCity color="#2F747F" />,
+    district: <FaRegAddressCard color="#2F747F" />,
+    area: <MdLocationOn color="#2F747F" />,
+    streetName: <RiLayoutLine color="#2F747F" />,
+    doorNumber: <BiBuildingHouse color="#2F747F" />,
+    nagar: <FaRegAddressCard color="#2F747F" />,
+
+    // Ownership & Posting Info
+    ownerName: <FaUserAlt color="#2F747F" />,
+    postedBy: <FaUserAlt color="#2F747F" />,
+    ownership: <HiUserGroup color="#2F747F" />,
+
+    // Property Details
+    propertyMode: <MdApproval color="#2F747F" />,
+    propertyType: <MdOutlineOtherHouses color="#2F747F" />,
+    propertyApproved: <BsFillHouseCheckFill color="#2F747F" />,
+    propertyAge: <MdSchedule color="#2F747F" />,
+    description: <BsTextareaT color="#2F747F" />,
+
+    // Pricing & Financials
+    price: <FaRupeeSign color="#2F747F" />,
+    bankLoan: <BsBank color="#2F747F" />,
+    negotiation: <GiMoneyStack color="#2F747F" />,
+
+    // Measurements
+    length: <MdStraighten color="#2F747F" />,
+    breadth: <MdStraighten color="#2F747F" />,
+    totalArea: <GiResize color="#2F747F" />,
+    areaUnit: <FaChartArea color="#2F747F" />,
+
+    // Room & Floor Details
+    bedrooms: <FaBed color="#2F747F" />,
+    kitchen: <GiKitchenScale color="#2F747F" />,
+    // kitchenType: <GiKitchenScale color="#2F747F" />,
+    balconies: <MdOutlineMeetingRoom color="#2F747F" />,
+    floorNo: <BsBuildingsFill color="#2F747F" />,
+    numberOfFloors: <BsBuildingsFill color="#2F747F" />,
+    attachedBathrooms: <FaBath color="#2F747F" />,
+    western: <FaToilet color="#2F747F" />,
+
+    // Features & Amenities
+    facing: <TbArrowLeftRight color="#2F747F" />,
+    salesMode: <GiGears color="#2F747F" />,
+    salesType: <MdOutlineOtherHouses color="#2F747F" />,
+    furnished: <FaHome color="#2F747F" />,
+    lift: <BsBuildingsFill color="#2F747F" />,
+    carParking: <FaCar color="#2F747F" />,
+    pinCode: <TbMapPinCode color="#2F747F" />,
+    locationCoordinates: <TbWorldLongitude color="#2F747F" />,
+  };
+
+  const fieldLabels = {
+    propertyMode: "Property Mode",
+    propertyType: "Property Type",
+    price: "Price",
+    propertyAge: "Property Age",
+    bankLoan: "Bank Loan",
+    negotiation: "Negotiation",
+    length: "Length",
+    breadth: "Breadth",
+    totalArea: "Total Area",
+    ownership: "Ownership",
+    bedrooms: "Bedrooms",
+    kitchen: "Kitchen",
+    // kitchenType: "Kitchen Type",
+    balconies: "Balconies",
+    floorNo: "Floor No.",
+    areaUnit: "Area Unit",
+    propertyApproved: "Property Approved",
+    postedBy: "Posted By",
+    facing: "Facing",
+    salesMode: "Sales Mode",
+    salesType: "Sales Type",
+    description: "Description",
+    furnished: "Furnished",
+    lift: "Lift",
+    attachedBathrooms: "Attached Bathrooms",
+    western: "Western Toilet",
+    numberOfFloors: "Number of Floors",
+    carParking: "Car Parking",
+    // rentalPropertyAddress: "Property Address",
+    country: "Country",
+    state: "State",
+    city: "City",
+    district: "District",
+    area: "Area",
+    streetName: "Street Name",
+    doorNumber: "Door Number",
+    nagar: "Nagar",
+    ownerName: "Owner Name",
+    email: "Email",
+    phoneNumber: "Phone Number",
+    phoneNumberCountryCode: "Phone Country Code",
+    alternatePhone: "Alternate Phone",
+    alternatePhoneCountryCode: "Alternate Phone Country Code",
+    bestTimeToCall: "Best Time to Call",
+  };
+
+  const renderDropdown = (field) => {
+    const options = dataList[field] || [];
+    const filteredOptions = options.filter((option) =>
+      option.toLowerCase().includes(dropdownState.filterText.toLowerCase()),
     );
 
-    console.log('Property response', propertyResponse);
-    alert(propertyResponse.data?.message || 'Property submitted');
-    
-    // If all mandatory fields are filled, redirect to Preapproved Property; otherwise to Property List
-    if (statusToSend === 'complete') {
-      navigate("/dashboard/pre-approved-car");
-    } else {
-      navigate("/dashboard/property-list");
-    }
-  } catch (error) {
-    console.error('Property submit error:', error);
-    if (error?.response) {
-      console.error('Server response data:', error.response.data);
-      // If backend returned validation errors, aggregate and show them
-      const resp = error.response.data || {};
-      const backendMessage = resp.message || `Server error: ${error.response.status}`;
-      let detailMsg = '';
-      if (resp.error && resp.error.errors) {
-        try {
-          const errs = resp.error.errors;
-          const parts = Object.keys(errs).map((k) => {
-            const e = errs[k];
-            return e.message || JSON.stringify(e);
-          });
-          detailMsg = parts.join('\n');
-        } catch (e) {
-          detailMsg = JSON.stringify(resp.error.errors);
-        }
-      } else if (resp.error && resp.error.message) {
-        detailMsg = resp.error.message;
-      } else if (resp.errors) {
-        // fallback
-        detailMsg = JSON.stringify(resp.errors);
-      }
-
-      if (detailMsg) {
-        alert(`${backendMessage}:\n${detailMsg}`);
-      } else {
-        alert(backendMessage);
-      }
-    } else {
-      alert(error.message || 'An error occurred while submitting the property data.');
-    }
-  }
-};
-
-
-useEffect(() => {
-  const storedPpcId = localStorage.getItem("ppcId");
-
-  if (!storedPpcId) {
-    localStorage.removeItem("ppcId"); // Reset PPC-ID when user leaves and returns
-  }
-}, []);
-
-const fieldIcons = {
-  // Contact Details
-  phoneNumber: <FaPhone color="#2F747F" />,
-  alternatePhone: <FaPhone color="#2F747F" />,
-  email: <FaEnvelope color="#2F747F" />,
-  bestTimeToCall: <MdSchedule color="#2F747F" />,
-  
-  // Property Location
-  // rentalPropertyAddress: <MdLocationCity color="#2F747F" />,
-  country: <BiWorld color="#2F747F" />,
-  state: <MdLocationCity color="#2F747F" />,
-  city: <FaCity color="#2F747F" />,
-  district: <FaRegAddressCard color="#2F747F" />,
-  area: <MdLocationOn color="#2F747F" />,
-  streetName: <RiLayoutLine color="#2F747F" />,
-  doorNumber: <BiBuildingHouse color="#2F747F" />,
-  nagar: <FaRegAddressCard color="#2F747F" />,
-
-  // Ownership & Posting Info
-  ownerName: <FaUserAlt color="#2F747F" />,
-  postedBy: <FaUserAlt color="#2F747F" />,
-  ownership: <HiUserGroup color="#2F747F" />,
-
-  // Property Details
-  propertyMode: <MdApproval color="#2F747F" />,
-  propertyType: <MdOutlineOtherHouses color="#2F747F" />,
-  propertyApproved: <BsFillHouseCheckFill color="#2F747F" />,
-  propertyAge: <MdSchedule color="#2F747F" />,
-  description: <BsTextareaT color="#2F747F" />,
-
-  // Pricing & Financials
-  price: <FaRupeeSign color="#2F747F" />,
-  bankLoan: <BsBank color="#2F747F" />,
-  negotiation: <GiMoneyStack color="#2F747F" />,
-
-  // Measurements
-  length: <MdStraighten color="#2F747F" />,
-  breadth: <MdStraighten color="#2F747F" />,
-  totalArea: <GiResize color="#2F747F" />,
-  areaUnit: <FaChartArea color="#2F747F" />,
-
-  // Room & Floor Details
-  bedrooms: <FaBed color="#2F747F" />,
-  kitchen: <GiKitchenScale color="#2F747F" />,
-  // kitchenType: <GiKitchenScale color="#2F747F" />,
-  balconies: <MdOutlineMeetingRoom color="#2F747F" />,
-  floorNo: <BsBuildingsFill color="#2F747F" />,
-  numberOfFloors: <BsBuildingsFill color="#2F747F" />,
-  attachedBathrooms: <FaBath color="#2F747F" />,
-  western: <FaToilet  color="#2F747F" />,
-
-  // Features & Amenities
-  facing: <TbArrowLeftRight color="#2F747F" />,
-  salesMode: <GiGears color="#2F747F" />,
-  salesType: <MdOutlineOtherHouses color="#2F747F" />,
-  furnished: <FaHome color="#2F747F" />,
-  lift: <BsBuildingsFill color="#2F747F" />,
-  carParking: <FaCar color="#2F747F" />,
-    pinCode: <TbMapPinCode color="#2F747F" />,
-  locationCoordinates: <TbWorldLongitude color="#2F747F" />,
-
-};
-
-const fieldLabels = {
-  propertyMode: "Property Mode",
-  propertyType: "Property Type",
-  price: "Price",
-  propertyAge: "Property Age",
-  bankLoan: "Bank Loan",
-  negotiation: "Negotiation",
-  length: "Length",
-  breadth: "Breadth",
-  totalArea: "Total Area",
-  ownership: "Ownership",
-  bedrooms: "Bedrooms",
-  kitchen: "Kitchen",
-  // kitchenType: "Kitchen Type",
-  balconies: "Balconies",
-  floorNo: "Floor No.",
-  areaUnit: "Area Unit",
-  propertyApproved: "Property Approved",
-  postedBy: "Posted By",
-  facing: "Facing",
-  salesMode: "Sales Mode",
-  salesType: "Sales Type",
-  description: "Description",
-  furnished: "Furnished",
-  lift: "Lift",
-  attachedBathrooms: "Attached Bathrooms",
-  western: "Western Toilet",
-  numberOfFloors: "Number of Floors",
-  carParking: "Car Parking",
-  // rentalPropertyAddress: "Property Address",
-  country: "Country",
-  state: "State",
-  city: "City",
-  district: "District",
-  area: "Area",
-  streetName: "Street Name",
-  doorNumber: "Door Number",
-  nagar: "Nagar",
-  ownerName: "Owner Name",
-  email: "Email",
-  phoneNumber: "Phone Number",
-  phoneNumberCountryCode: "Phone Country Code",
-  alternatePhone: "Alternate Phone",
-  alternatePhoneCountryCode: "Alternate Phone Country Code",
-  bestTimeToCall: "Best Time to Call",
-};
-
-
-const renderDropdown = (field) => {
-  const options = dataList[field] || [];
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(dropdownState.filterText.toLowerCase())
-  );
-
-  return (
-    <div data-field={field}>
-      {dropdownState.activeDropdown === field && (
-        <div
-          className="popup-overlay"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1509,
-            animation: 'fadeIn 0.3s ease-in-out',
-          }}
-        >
+    return (
+      <div data-field={field}>
+        {dropdownState.activeDropdown === field && (
           <div
-            className="dropdown-popup"
+            className="popup-overlay"
             style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              backgroundColor: 'white',
-              width: '100%',
-              maxWidth: '300px',
-              padding: '10px',
-              zIndex: 10,
-              boxShadow: '0 4px 8px rgba(0, 123, 255, 0.3)',
-              borderRadius: '18px',
-              animation: 'popupOpen 0.3s ease-in-out',
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 1509,
+              animation: "fadeIn 0.3s ease-in-out",
             }}
           >
             <div
-              className="p-1"
+              className="dropdown-popup"
               style={{
-                fontWeight: 500,
-                fontSize: '15px',
-                marginBottom: '10px',
-                textAlign: 'start',
-                color: 'grey',
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                backgroundColor: "white",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "10px",
+                zIndex: 10,
+                boxShadow: "0 4px 8px rgba(0, 123, 255, 0.3)",
+                borderRadius: "18px",
+                animation: "popupOpen 0.3s ease-in-out",
               }}
             >
-              Select or Search{' '}
-              <span style={{ color: '#0B57CF', fontWeight: 500 }}>
-                {fieldLabels[field] || 'Property Field'}
-              </span>
-            </div>
-            <div
-              className="mb-1"
-              style={{
-                position: 'relative',
-                width: '100%',
-                background: '#EEF4FA',
-                borderRadius: '25px',
-              }}
-            >
-              <FcSearch
-                size={16}
+              <div
+                className="p-1"
                 style={{
-                  position: 'absolute',
-                  left: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  pointerEvents: 'none',
-                  color: 'black',
+                  fontWeight: 500,
+                  fontSize: "15px",
+                  marginBottom: "10px",
+                  textAlign: "start",
+                  color: "grey",
                 }}
-              />
-              <input
-                className="m-0 rounded-0 ms-1"
-                type="text"
-                placeholder="Filter options..."
-                value={dropdownState.filterText}
-                onChange={handleFilterChange}
+              >
+                Select or Search{" "}
+                <span style={{ color: "#0B57CF", fontWeight: 500 }}>
+                  {fieldLabels[field] || "Property Field"}
+                </span>
+              </div>
+              <div
+                className="mb-1"
                 style={{
-                  width: '100%',
-                  padding: '5px 5px 5px 30px', // left padding for the icon
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
+                  position: "relative",
+                  width: "100%",
+                  background: "#EEF4FA",
+                  borderRadius: "25px",
                 }}
-              />
-            </div>
-
-            <ul
-              style={{
-                listStyleType: 'none',
-                padding: 0,
-                margin: 0,
-                overflowY: 'auto',
-                maxHeight: '350px',
-              }}
-            >
-              {filteredOptions.map((option, index) => (
-                <li
-                  key={index}
-                onClick={() => {
-  setFormData((prevState) => ({
-    ...prevState,
-    [field]: option,
-  }));
-
-  toggleDropdown(field); // Close current dropdown
- 
-  const currentIndex = filteredDropdownFieldOrder.indexOf(field);
-if (currentIndex !== -1 && currentIndex < filteredDropdownFieldOrder.length - 1) {
-  const nextField = filteredDropdownFieldOrder[currentIndex + 1];
-
-  if (nonDropdownFields.includes(nextField)) {
-    // Focus input field
-    setTimeout(() => {
-      const nextInput = document.querySelector(`[name="${nextField}"]`);
-      if (nextInput) {
-        nextInput.focus();
-        nextInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 150);
-  } else {
-    // Open next dropdown
-    setTimeout(() => {
-      toggleDropdown(nextField);
-      setTimeout(() => {
-        const el = document.querySelector(`[data-field="${nextField}"]`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    }, 0);
-  }
-}
-
-}}
-
+              >
+                <FcSearch
+                  size={16}
                   style={{
-                    fontWeight: 300,
-                    padding: '5px',
-                    cursor: 'pointer',
-                    color: 'grey',
-                    marginBottom: '5px',
-                    borderBottom: '1px solid #D0D7DE',
+                    position: "absolute",
+                    left: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    color: "black",
+                  }}
+                />
+                <input
+                  className="m-0 rounded-0 ms-1"
+                  type="text"
+                  placeholder="Filter options..."
+                  value={dropdownState.filterText}
+                  onChange={handleFilterChange}
+                  style={{
+                    width: "100%",
+                    padding: "5px 5px 5px 30px", // left padding for the icon
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <ul
+                style={{
+                  listStyleType: "none",
+                  padding: 0,
+                  margin: 0,
+                  overflowY: "auto",
+                  maxHeight: "350px",
+                }}
+              >
+                {filteredOptions.map((option, index) => (
+                  <li
+                    key={index}
+                    onClick={() => {
+                      setFormData((prevState) => ({
+                        ...prevState,
+                        [field]: option,
+                      }));
+
+                      toggleDropdown(field); // Close current dropdown
+
+                      const currentIndex =
+                        filteredDropdownFieldOrder.indexOf(field);
+                      if (
+                        currentIndex !== -1 &&
+                        currentIndex < filteredDropdownFieldOrder.length - 1
+                      ) {
+                        const nextField =
+                          filteredDropdownFieldOrder[currentIndex + 1];
+
+                        if (nonDropdownFields.includes(nextField)) {
+                          // Focus input field
+                          setTimeout(() => {
+                            const nextInput = document.querySelector(
+                              `[name="${nextField}"]`,
+                            );
+                            if (nextInput) {
+                              nextInput.focus();
+                              nextInput.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                            }
+                          }, 150);
+                        } else {
+                          // Open next dropdown
+                          setTimeout(() => {
+                            toggleDropdown(nextField);
+                            setTimeout(() => {
+                              const el = document.querySelector(
+                                `[data-field="${nextField}"]`,
+                              );
+                              if (el)
+                                el.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "center",
+                                });
+                            }, 100);
+                          }, 0);
+                        }
+                      }
+                    }}
+                    style={{
+                      fontWeight: 300,
+                      padding: "5px",
+                      cursor: "pointer",
+                      color: "grey",
+                      marginBottom: "5px",
+                      borderBottom: "1px solid #D0D7DE",
+                    }}
+                  >
+                    {option}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="d-flex justify-content-end">
+                <button
+                  className="me-1"
+                  type="button"
+                  onClick={() => {
+                    toggleDropdown(field); // Close current dropdown
+
+                    const currentIndex =
+                      filteredDropdownFieldOrder.indexOf(field);
+                    if (currentIndex > 0) {
+                      const prevField =
+                        filteredDropdownFieldOrder[currentIndex - 1];
+
+                      if (nonDropdownFields.includes(prevField)) {
+                        setTimeout(() => {
+                          const prevInput = document.querySelector(
+                            `[name="${prevField}"]`,
+                          );
+                          if (prevInput) {
+                            prevInput.focus();
+                            prevInput.scrollIntoView({
+                              behavior: "smooth",
+                              block: "center",
+                            });
+                          }
+                        }, 100);
+                      } else {
+                        setTimeout(() => {
+                          toggleDropdown(prevField);
+                          setTimeout(() => {
+                            const el = document.querySelector(
+                              `[data-field="${prevField}"]`,
+                            );
+                            if (el)
+                              el.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                          }, 100);
+                        }, 0);
+                      }
+                    }
+                  }}
+                  style={{
+                    background: "#EAEAF6",
+                    cursor: "pointer",
+                    border: "none",
+                    color: "#0B57CF",
+                    borderRadius: "10px",
+                    padding: "5px 10px",
+                    fontWeight: 500,
                   }}
                 >
-                  {option}
-                </li>
-              ))}
-            </ul>
+                  Prev
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleDropdown(field); // Close current dropdown
 
-            <div className="d-flex justify-content-end">
-              <button
-                className="me-1"
-                type="button"
-               onClick={() => {
-    toggleDropdown(field); // Close current dropdown
- 
-    const currentIndex = filteredDropdownFieldOrder.indexOf(field);
-if (currentIndex > 0) {
-  const prevField = filteredDropdownFieldOrder[currentIndex - 1];
+                    const currentIndex =
+                      filteredDropdownFieldOrder.indexOf(field);
 
-  if (nonDropdownFields.includes(prevField)) {
-    setTimeout(() => {
-      const prevInput = document.querySelector(`[name="${prevField}"]`);
-      if (prevInput) {
-        prevInput.focus();
-        prevInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
-  } else {
-    setTimeout(() => {
-      toggleDropdown(prevField);
-      setTimeout(() => {
-        const el = document.querySelector(`[data-field="${prevField}"]`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    }, 0);
-  }
-}
+                    if (
+                      currentIndex !== -1 &&
+                      currentIndex < filteredDropdownFieldOrder.length - 1
+                    ) {
+                      const nextField =
+                        filteredDropdownFieldOrder[currentIndex + 1];
 
-  }}
-                style={{
-                  background: '#EAEAF6',
-                  cursor: 'pointer',
-                  border: 'none',
-                  color: '#0B57CF',
-                  borderRadius: '10px',
-                  padding: '5px 10px',
-                  fontWeight: 500,
-                }}
-              >
-                Prev
-              </button>
- <button
-  type="button"
-  onClick={() => {
-    toggleDropdown(field); // Close current dropdown
+                      if (nonDropdownFields.includes(nextField)) {
+                        setTimeout(() => {
+                          const nextInput = document.querySelector(
+                            `[name="${nextField}"]`,
+                          );
+                          if (nextInput) {
+                            nextInput.focus();
+                            nextInput.scrollIntoView({
+                              behavior: "smooth",
+                              block: "center",
+                            });
+                          }
+                        }, 100);
+                      } else {
+                        setTimeout(() => {
+                          toggleDropdown(nextField); // Open next dropdown
+                          setTimeout(() => {
+                            const el = document.querySelector(
+                              `[data-field="${nextField}"]`,
+                            );
+                            if (el)
+                              el.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                          }, 100);
+                        }, 0);
+                      }
+                    }
+                  }}
+                  style={{
+                    background: "#EAEAF6",
+                    cursor: "pointer",
+                    border: "none",
+                    color: "#0B57CF",
+                    borderRadius: "10px",
+                    padding: "5px 10px",
+                    fontWeight: 500,
+                    marginRight: "5px",
+                  }}
+                >
+                  skip
+                </button>
 
-    
-    const currentIndex = filteredDropdownFieldOrder.indexOf(field);
+                <button
+                  type="button"
+                  onClick={() => toggleDropdown(field)}
+                  style={{
+                    background: "#0B57CF",
+                    cursor: "pointer",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "10px",
+                  }}
+                >
+                  Close
+                </button>
+              </div>
 
-if (currentIndex !== -1 && currentIndex < filteredDropdownFieldOrder.length - 1) {
-  const nextField = filteredDropdownFieldOrder[currentIndex + 1];
-
-  if (nonDropdownFields.includes(nextField)) {
-    setTimeout(() => {
-      const nextInput = document.querySelector(`[name="${nextField}"]`);
-      if (nextInput) {
-        nextInput.focus();
-        nextInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
-  } else {
-    setTimeout(() => {
-      toggleDropdown(nextField); // Open next dropdown
-      setTimeout(() => {
-        const el = document.querySelector(`[data-field="${nextField}"]`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    }, 0);
-  }
-}
-
-  }}
- style={{
-                   background: '#EAEAF6',
-                   cursor: 'pointer',
-                   border: 'none',
-                   color: '#0B57CF',
-                   borderRadius: '10px',
-                   padding: '5px 10px',
-                   fontWeight: 500,
-                   marginRight:"5px"
-                 }}
->
-  skip
-</button>
-
-              <button
-                type="button"
-                onClick={() => toggleDropdown(field)}
-                style={{
-                  background: '#0B57CF',
-                  cursor: 'pointer',
-                  border: 'none',
-                  color: '#fff',
-                  borderRadius: '10px',
-                }}
-              >
-                Close
-              </button>
-            </div>
-
-            {[
-              'negotiation',
-              'ownership',
-              'floorNo',
-              'postedBy',
-              'carParking',
-              'bestTimeToCall',
-            ].includes(field) && (
-              <div
-                style={{
-                  marginTop: '10px',
-                  paddingTop: '10px',
-                  borderTop: '1px solid #ccc',
-                  textAlign: 'center',
-                }}
-              >
+              {[
+                "negotiation",
+                "ownership",
+                "floorNo",
+                "postedBy",
+                "carParking",
+                "bestTimeToCall",
+              ].includes(field) && (
                 <div
                   style={{
-                    fontSize: '14px',
-                    fontWeight: 400,
-                    color: '#555',
-                    marginBottom: '8px',
+                    marginTop: "10px",
+                    paddingTop: "10px",
+                    borderTop: "1px solid #ccc",
+                    textAlign: "center",
                   }}
                 >
-                  Swipe through options to continue
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      color: "#555",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Swipe through options to continue
+                  </div>
+                  {/* Optional Continue Button can go here */}
                 </div>
-                {/* Optional Continue Button can go here */}
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-};
+        )}
+      </div>
+    );
+  };
 
-const requiredFields = [
-  'propertyMode',
-  'propertyType',
-  'price',
-  'totalArea',
-  'areaUnit',
-  'salesType',
-  'postedBy',
-  // location fields now required
-  'state',
-  'city',
-  'area',
-  'pinCode',
-];
+  const requiredFields = [
+    "propertyMode",
+    "propertyType",
+    "price",
+    "totalArea",
+    "areaUnit",
+    "salesType",
+    "postedBy",
+    "phoneNumber",
+  ];
 
-   const nonDropdownFields = ["price", "length", "totalArea", "description", "city",  "area", "alternatePhone",];
+  const nonDropdownFields = [
+    "price",
+    "length",
+    "totalArea",
+    "description",
+    "city",
+    "area",
+    "alternatePhone",
+  ];
 
-const dropdownFieldOrder = [
-  "propertyMode",
-  "propertyType",
-  "price",
-  "negotiation",
-  "length",
-  "breadth",
-  "totalArea",
-  "areaUnit",
-  "ownership",
-  "bedrooms",
-  "kitchen",
-   "balconies",
-  "floorNo",
-  "propertyApproved",
-  "propertyAge",
-  "bankLoan",
+  const dropdownFieldOrder = [
+    "propertyMode",
+    "propertyType",
+    "price",
+    "negotiation",
+    "length",
+    "breadth",
+    "totalArea",
+    "areaUnit",
+    "ownership",
+    "bedrooms",
+    "kitchen",
+    "balconies",
+    "floorNo",
+    "propertyApproved",
+    "propertyAge",
+    "bankLoan",
     "facing",
-  "salesMode",
-  "salesType",
-  "postedBy",
-  "description",
-  "furnished",
-  "lift",
-  "attachedBathrooms",
-  "western",
-  // "numberOfFloors",
-  "carParking",
-  "YourProperty",
-   "city",
-  "district",
-  "area",
+    "salesMode",
+    "salesType",
+    "postedBy",
+    "description",
+    "furnished",
+    "lift",
+    "attachedBathrooms",
+    "western",
+    // "numberOfFloors",
+    "carParking",
+    "YourProperty",
+    "city",
+    "district",
+    "area",
     "alternatePhone",
 
-  "bestTimeToCall"
-];
-const hiddenPropertyTypes = ['Plot', 'Land', 'Agricultural Land'];
+    "bestTimeToCall",
+  ];
+  const hiddenPropertyTypes = ["Plot", "Land", "Agricultural Land"];
 
-const fieldsToHideForPlot = [
-  'furnished',
-  'lift',
-  'attachedBathrooms',
-  'western',
-  // 'numberOfFloors',
-  'carParking',
-  'bedrooms',
-  'kitchen',
-  'kitchenType',
-  'balconies',
-  'floorNo',
-];
-const shouldHideField = (fieldName) =>
-  hiddenPropertyTypes.includes(formData.propertyType) &&
-  fieldsToHideForPlot.includes(fieldName);
+  const fieldsToHideForPlot = [
+    "furnished",
+    "lift",
+    "attachedBathrooms",
+    "western",
+    // 'numberOfFloors',
+    "carParking",
+    "bedrooms",
+    "kitchen",
+    "kitchenType",
+    "balconies",
+    "floorNo",
+  ];
+  const shouldHideField = (fieldName) =>
+    hiddenPropertyTypes.includes(formData.propertyType) &&
+    fieldsToHideForPlot.includes(fieldName);
 
   const filteredDropdownFieldOrder = dropdownFieldOrder.filter(
-  (field) => !shouldHideField(field)
-);
-const selectFields = [
-  "propertyMode", "propertyType", "bankLoan", "negotiation", "ownership", 
-  "bedrooms", "kitchen", "balconies", "floorNo", 
-  "areaUnit", "propertyApproved", "propertyAge", "postedBy", "facing", 
-  "salesMode", "salesType", "furnished", "lift", "attachedBathrooms", 
-  "western", "numberOfFloors", "carParking", "bestTimeToCall"
-];
-
-const inputFields = [
-  "state", "city", "district", "area",
-  "streetName", "doorNumber", "nagar", "ownerName", "email",
-  "phoneNumber", "alternatePhone","price"
-];
-
-
-const fields = [
-  { name: "propertyMode", type: "select" },
-  { name: "propertyType", type: "select" },
-  { name: "price", type: "input" },
-  { name: "negotiation", type: "select" },
-  { name: "length", type: "input" },
-  { name: "breadth", type: "input" },
-  { name: "totalArea", type: "input" },
-  { name: "areaUnit", type: "select" },
-  { name: "ownership", type: "select" },
-  { name: "bedrooms", type: "select" },
-  { name: "kitchen", type: "select" },
-   { name: "balconies", type: "select" },
-  { name: "floorNo", type: "select" },
-  { name: "propertyApproved", type: "select" },
-  { name: "propertyAge", type: "select" },
-  { name: "bankLoan", type: "select" },
-  { name: "facing", type: "select" },
-  { name: "salesMode", type: "select" },
-  { name: "salesType", type: "select" },
-  { name: "postedBy", type: "select" },
-  { name: "description", type: "input" },
-  { name: "furnished", type: "select" },
-  { name: "lift", type: "select" },
-  { name: "attachedBathrooms", type: "select" },
-  { name: "western", type: "select" },
-  { name: "numberOfFloors", type: "select" },
-  { name: "carParking", type: "select" },
-  { name: "rentalPropertyAddress", type: "input" },
-  { name: "country", type: "input" },
-  { name: "state", type: "input" },
-  { name: "city", type: "input" },
-  { name: "district", type: "select" },
-  { name: "area", type: "input" },
-    { name: "nagar", type: "input" },
-  { name: "streetName", type: "input" },
-  { name: "doorNumber", type: "input" },
-    { name: "pinCode", type: "input" },
-  { name: "locationCoordinates", type: "input" },
-
-  { name: "ownerName", type: "input" },
-  { name: "email", type: "input" },
-  { name: "phoneNumber", type: "input" },
-  { name: "alternatePhone", type: "input" },
-  { name: "bestTimeToCall", type: "select" },
-];
-
-
-
-if (loading) return <p>Loading...</p>;
-
-if (!allowedRoles.includes(fileName)) {
-  return (
-    <div className="text-center text-red-500 font-semibold text-lg mt-10">
-      Only admin is allowed to view this file.
-    </div>
+    (field) => !shouldHideField(field),
   );
-}
+  const selectFields = [
+    "propertyMode",
+    "propertyType",
+    "bankLoan",
+    "negotiation",
+    "ownership",
+    "bedrooms",
+    "kitchen",
+    "balconies",
+    "floorNo",
+    "areaUnit",
+    "propertyApproved",
+    "propertyAge",
+    "postedBy",
+    "facing",
+    "salesMode",
+    "salesType",
+    "furnished",
+    "lift",
+    "attachedBathrooms",
+    "western",
+    "numberOfFloors",
+    "carParking",
+    "bestTimeToCall",
+  ];
 
+  const inputFields = [
+    "state",
+    "city",
+    "district",
+    "area",
+    "streetName",
+    "doorNumber",
+    "nagar",
+    "ownerName",
+    "email",
+    "phoneNumber",
+    "alternatePhone",
+    "price",
+  ];
 
-  return (
-    <div className="d-flex align-items-center justify-content-center">
-    <div      style={{
-              width: '100%',
-              maxWidth: '450px',
-              minWidth: '300px',
-              padding: '5px',
-              borderRadius: '8px',
-              margin: '0 5px',
-            }}>
-      <h1>Property Management</h1>
-      <form className="addForm" onSubmit={handleSubmit}>
-        <p className="p-3" style={{ color: "white", backgroundColor: "rgb(47,116,127)" }}>PPC-ID: {ppcId}</p>
+  const fields = [
+    { name: "propertyMode", type: "select" },
+    { name: "propertyType", type: "select" },
+    { name: "price", type: "input" },
+    { name: "negotiation", type: "select" },
+    { name: "length", type: "input" },
+    { name: "breadth", type: "input" },
+    { name: "totalArea", type: "input" },
+    { name: "areaUnit", type: "select" },
+    { name: "ownership", type: "select" },
+    { name: "bedrooms", type: "select" },
+    { name: "kitchen", type: "select" },
+    { name: "balconies", type: "select" },
+    { name: "floorNo", type: "select" },
+    { name: "propertyApproved", type: "select" },
+    { name: "propertyAge", type: "select" },
+    { name: "bankLoan", type: "select" },
+    { name: "facing", type: "select" },
+    { name: "salesMode", type: "select" },
+    { name: "salesType", type: "select" },
+    { name: "postedBy", type: "select" },
+    { name: "description", type: "input" },
+    { name: "furnished", type: "select" },
+    { name: "lift", type: "select" },
+    { name: "attachedBathrooms", type: "select" },
+    { name: "western", type: "select" },
+    { name: "numberOfFloors", type: "select" },
+    { name: "carParking", type: "select" },
+    { name: "rentalPropertyAddress", type: "input" },
+    { name: "country", type: "input" },
+    { name: "state", type: "input" },
+    { name: "city", type: "input" },
+    { name: "district", type: "select" },
+    { name: "area", type: "input" },
+    { name: "nagar", type: "input" },
+    { name: "streetName", type: "input" },
+    { name: "doorNumber", type: "input" },
+    { name: "pinCode", type: "input" },
+    { name: "locationCoordinates", type: "input" },
 
+    { name: "ownerName", type: "input" },
+    { name: "email", type: "input" },
+    { name: "phoneNumber", type: "input" },
+    { name: "alternatePhone", type: "input" },
+    { name: "bestTimeToCall", type: "select" },
+  ];
 
-        <PropertyUploadSection
-          photos={photos}
-          processingPhotoIndices={processingPhotoIndices}
-          photoProgress={photoProgress}
-          selectedPhotoIndex={selectedPhotoIndex}
-          handlePhotoUpload={handlePhotoUpload}
-          removePhoto={removePhoto}
-          handlePhotoSelect={handlePhotoSelect}
-          videos={videos}
-          processingVideoIndices={processingVideoIndices}
-          videoProgress={videoProgress}
-          handleVideoChange={handleVideoChange}
-          removeVideo={removeVideo}
-        />
+  if (loading) return <p>Loading...</p>;
 
-
- 
-{fields.map(({ name, type }) => {
-  if (shouldHideField(name)) return null;
-
-  if (name === "rentalPropertyAddress") {
+  if (!allowedRoles.includes(fileName)) {
     return (
-      <div key={name} className="form-group">
-                <div className="form-group">
-
-            <div
-            className="input-card p-0 rounded-1"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-              border: "1px solid #2F747F",
-              background: "#fff",
-            }}
-          >
-            <FcSearch
-              className="input-icon"
-              style={{ color: "#2F747F", marginLeft: "10px" }}
-            />
-            <input
-              ref={inputRef}
-              id="pac-input"
-              className="form-input m-0"
-              placeholder="Search location"
-              style={{
-                flex: "1 0 80%",
-                padding: "8px",
-                fontSize: "14px",
-                border: "none",
-                outline: "none",
-              }}
-            />
-          </div>
-        </div>
-        <div
-          ref={mapRef}
-          id="map"
-          style={{ height: "200px", width: "100%" }}
-        ></div>
-
-<div className="mt-3 w-100 d-flex gap-2 mb-2">
-
-  <input
-  ref={coordRef}
-  placeholder="Enter Your Property Coordinates"
-  className="form-control m-0"
-    onChange={(e) => setCoordinateInput(e.target.value)}
-
-/>
-<button className="btn btn-primary m-0 border-0" type="button"
-     style={{ whiteSpace: 'nowrap', background:"#6CBAAF" ,  }}
- onClick={() => handleLatLngAuto(coordinateInput)}>
-  Go
-</button>
-
-  <button
-    onClick={handleClear}
-    type="button"
-    className="btn btn-primary m-0 border-0"
-    style={{ whiteSpace: 'nowrap', background:"#B1D3C0" ,  }}
-  >
-    <MdOutlineClose color="white"/>
-  </button>
-
-</div>
+      <div className="text-center text-red-500 font-semibold text-lg mt-10">
+        Only admin is allowed to view this file.
       </div>
     );
   }
 
   return (
-    <div key={name} className="form-group">
-      <label
+    <div className="d-flex align-items-center justify-content-center">
+      <div
         style={{
-          color: "#2F747F",
-          fontWeight: "bold",
-          display: "block",
-          marginBottom: "5px",
+          width: "100%",
+          maxWidth: "450px",
+          minWidth: "300px",
+          padding: "5px",
+          borderRadius: "8px",
+          margin: "0 5px",
         }}
       >
-        {name.replace(/([A-Z])/g, " $1").trim()}
-        {requiredFields.includes(name) && <span style={{ color: 'red' }}> * </span>}
-      </label>
+        <h1>Property Management</h1>
+        <form className="addForm" onSubmit={handleSubmit}>
+          <p
+            className="p-3"
+            style={{ color: "white", backgroundColor: "rgb(47,116,127)" }}
+          >
+            PPC-ID: {ppcId}
+          </p>
 
-      {type === "select" ? (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ flex: "1" }}>
-            <label>
-              <select
-                name={name}
-                value={formData[name] || ""}
-                onChange={handleFieldChange}
-                className="form-control"
-                required={requiredFields.includes(name)}
-                style={{ display: "none" }}
-              >
-                <option value="">Select {name.replace(/([A-Z])/g, " $1")}</option>
-                {dataList[name]?.map((option, index) => (
-                  <option key={index} value={option}>{option}</option>
-                ))}
-              </select>
+          <h4
+            style={{
+              color: "rgb(47,116,127)",
+              fontWeight: "bold",
+              marginBottom: "10px",
+            }}
+          >
+            {" "}
+            Property Images{" "}
+          </h4>
 
-              <button
-                type="button"
-                onClick={() => toggleDropdown(name)}
+          <div className="form-group photo-upload-container mt-2">
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              name="photos"
+              id="photo-upload"
+              className="photo-upload-input"
+              style={{ display: "none" }} // Hide the input field
+            />
+            <label
+              htmlFor="photo-upload"
+              className="photo-upload-label fw-normal m-0"
+            >
+              <MdAddPhotoAlternate
                 style={{
-                  cursor: "pointer",
-                  border: "1px solid #2F747F",
-                  padding: "10px",
-                  background: "#fff",
-                  borderRadius: "5px",
-                  width: "100%",
-                  textAlign: "left",
-                  color: "#2F747F",
+                  color: "white",
+                  backgroundColor: "#2e86e4",
+                  padding: "5px",
+                  fontSize: "30px",
+                  borderRadius: "50%",
+                  marginRight: "5px",
                 }}
-              >
-                <span style={{ marginRight: "10px" }}>
-                  {fieldIcons[name] || <FaHome />}
-                </span>
-                {formData[name] || `Select ${name.replace(/([A-Z])/g, " $1")}`}
-              </button>
-
-              {renderDropdown(name)}
+              />
+              Upload Your Property Images
             </label>
           </div>
-        </div>
-      ) : name === "description" ? (
-        <div style={{ width: "100%" }}>
-          <div
-            className="input-card p-0 rounded-1"
+
+          {uploadingPhotos ? (
+            <p>Compressing...</p>
+          ) : (
+            photos.length > 0 && (
+              <div className="uploaded-photos">
+                <h4>Uploaded Photos</h4>
+                <div className="uploaded-photos-grid">
+                  {photos.map((photo, index) => (
+                    <div key={index} className="uploaded-photo-item">
+                      <input
+                        type="radio"
+                        name="selectedPhoto"
+                        className="me-1"
+                        checked={selectedPhotoIndex === index}
+                        onChange={() => handlePhotoSelect(index)}
+                      />
+
+                      <img
+                        src={URL.createObjectURL(photo)}
+                        alt="Uploaded"
+                        className="uploaded-photo mb-3"
+                      />
+                      <button
+                        style={{ border: "none" }}
+                        className="position-absolute top-0 end-0 btn m-0 p-1"
+                        onClick={() => removePhoto(index)}
+                      >
+                        <IoCloseCircle size={20} color="#F22952" />
+                      </button>
+                      {/* </div> */}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          )}
+
+          {/* Video Upload Section */}
+          <h4
             style={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "center",
-              width: "100%",
-              border: "1px solid #2F747F",
-              background: "#fff",
-              flexDirection: "column",
+              color: "rgb(47,116,127)",
+              fontWeight: "bold",
+              marginBottom: "10px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", width: "100%", padding: "8px" }}>
-              <span className="input-icon" style={{ color: "#2F747F" }}>
-                {fieldIcons[name] || <FaEdit />}
-              </span>
-              <textarea
-                name={name}
-                value={formData[name] || ""}
-                onChange={handleFieldChange}
-                required={requiredFields.includes(name)}
-                maxLength={250}
-                className="form-input m-0"
-                placeholder={`Enter ${name.replace(/([A-Z])/g, " $1")} (max 250 characters)`}
-                style={{
-                  flex: "1 0 70%",
-                  padding: "8px",
-                  fontSize: "14px",
-                  border: "none",
-                  outline: "none",
-                  minHeight: "100px",
-                  resize: "vertical",
-                  color: "#2F747F",
-                  fontFamily: "inherit",
-                }}
-              />
-            </div>
-            <div style={{ padding: "8px 12px 12px 12px", width: "100%" }}>
-              <div style={{ height: "8px", background: "#e6e6e6", borderRadius: "4px", overflow: "hidden" }}>
-                <div
+            Property Video
+          </h4>
+          <div className="form-group">
+            <input
+              type="file"
+              name="video"
+              accept="video/*"
+              id="videoUpload"
+              onChange={handleVideoChange}
+              className="d-none"
+            />
+            <label
+              htmlFor="videoUpload"
+              className="file-upload-label fw-normal"
+            >
+              <span className="pt-5">
+                <FaFileVideo
                   style={{
-                    height: "100%",
-                    width: `${Math.min(100, (((formData[name]?.length || 0) / 250) * 100))}%`,
-                    background: formData[name]?.length >= 250 ? "#d32f2f" : formData[name]?.length > 175 ? "#f2c94c" : "#4caf50",
-                    transition: "width 0.18s ease, background-color 0.18s ease",
+                    color: "white",
+                    backgroundColor: "#2e86e4",
+                    padding: "5px",
+                    fontSize: "30px",
+                    marginRight: "5px",
                   }}
                 />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px", alignItems: "center" }}>
-                <div style={{ fontSize: "12px", color: formData[name]?.length >= 250 ? "#d32f2f" : "#666" }}>
-                  {formData[name]?.length || 0} / 250
-                </div>
-                {formData[name]?.length >= 250 && (
-                  <div style={{ fontSize: "12px", color: "#d32f2f", fontWeight: 600 }}>
-                    Limit reached
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div
-            className="input-card p-0 rounded-1"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-              border: "1px solid #2F747F",
-              background: "#fff",
-            }}
-          >
-            <span className="input-icon" style={{ color: "#2F747F", marginLeft: "10px" }}>
-              {fieldIcons[name] || <FaEdit />}
-            </span>
+                Upload Property Video
+              </span>
+            </label>
 
-            {name === "phoneNumber" && (
-              <select
-                name="phoneNumberCountryCode"
-                value={formData.phoneNumberCountryCode || ""}
-                onChange={handleFieldChange}
-                className="form-control m-0"
-                style={{ width: "30%", padding: "8px", fontSize: "14px", border: "none", outline: "none" }}
-              >
-                <option value="">Select Country Code</option>
-                {countryCodes.map((item, index) => (
-                  <option key={index} value={item.code}>
-                    {item.code} - {item.country}
-                  </option>
-                ))}
-              </select>
-            )}
-
-            {name === "alternatePhone" && (
-              <select
-                name="alternatePhoneCountryCode"
-                value={formData.alternatePhoneCountryCode || ""}
-                onChange={handleFieldChange}
-                className="form-control m-0"
-                style={{ width: "30%", padding: "8px", fontSize: "14px", border: "none", outline: "none" }}
-              >
-                <option value="">Select Country Code</option>
-                {alternateCountryCodes.map((item, index) => (
-                  <option key={index} value={item.code}>
-                    {item.code} - {item.country}
-                  </option>
-                ))}
-              </select>
-            )}
-
-            <div style={{ flex: "1 0 70%", position: "relative" }}>
-              <input
-                type={name === "email" ? "email" : "text"}
-                name={name}
-                value={formData[name] || ""}
-                onChange={name === "area" ? handleAreaInputChange : handleFieldChange}
-                onFocus={name === "area" ? handleAreaFocus : undefined}
-                onBlur={name === "area" ? handleAreaBlur : undefined}
-                required={requiredFields.includes(name)}
-                className="form-input m-0"
-                placeholder={`Enter ${name.replace(/([A-Z])/g, " $1")}`}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  fontSize: "14px",
-                  border: "none",
-                  outline: "none",
-                  color: "#2F747F",
-                }}
-              />
-              
-              {name === "area" && showAreaSuggestions && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    right: 0,
-                    backgroundColor: "#fff",
-                    border: "1px solid #2F747F",
-                    borderTop: "none",
-                    maxHeight: "200px",
-                    overflowY: "auto",
-                    zIndex: 1000,
-                  }}
-                >
-                  {areaSuggestions.length > 0 ? (
-                    areaSuggestions.map((suggestion, index) => (
+            {/* Display the selected video */}
+            {uploadingVideos ? (
+              <p>Uploading...</p>
+            ) : (
+              videos.length > 0 && (
+                <div className="selected-video-container mt-3">
+                  <h5 className="text-start">Selected Videos:</h5>
+                  <div
+                    style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
+                  >
+                    {videos.map((video, index) => (
                       <div
                         key={index}
-                        onMouseDown={(e) => { e.preventDefault(); handleAreaSelect(suggestion); }}
                         style={{
-                          padding: "8px",
-                          cursor: "pointer",
-                          backgroundColor: formData.area === suggestion ? "#f0f0f0" : "#fff",
-                          borderBottom: "1px solid #eee",
-                          color: "#2F747F",
-                          fontSize: "14px",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#f0f0f0";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = formData.area === suggestion ? "#f0f0f0" : "#fff";
+                          position: "relative",
+                          display: "inline-block",
                         }}
                       >
-                        {suggestion}
+                        <video width="200" height="200" controls>
+                          <source
+                            src={URL.createObjectURL(video)}
+                            type="video/mp4"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                        <Button
+                          variant="danger"
+                          onClick={() => removeVideo(index)}
+                          style={{ border: "none", background: "transparent" }}
+                          className="position-absolute top-0 end-0 m-1 p-1"
+                        >
+                          <IoCloseCircle size={20} color="#F22952" />
+                        </Button>
                       </div>
-                    ))
-                  ) : (
-                    <div style={{ padding: "8px", color: "#999", fontSize: "14px" }}>No areas found</div>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              )}
-            </div>
+              )
+            )}
           </div>
 
-          {name === "price" && priceInWords && (
-            <p style={{ fontSize: "14px", color: "#2F747F", marginTop: "5px" }}>
-              {priceInWords}
-            </p>
-          )}
-        </>
-      )}
-    </div>
-  );
-})}
+          {fields.map(({ name, type }) => {
+            if (shouldHideField(name)) return null;
 
-        {saveNotice && (
-          <div style={{ margin: '8px 0', padding: '8px', background: '#fff3cd', color: '#856404', borderRadius: 6 }} role="status">
-            {saveNotice}
-          </div>
-        )}
+            if (name === "rentalPropertyAddress") {
+              return (
+                <div key={name} className="form-group">
+                  <div className="form-group">
+                    <div
+                      className="input-card p-0 rounded-1"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        border: "1px solid #2F747F",
+                        background: "#fff",
+                      }}
+                    >
+                      <FcSearch
+                        className="input-icon"
+                        style={{ color: "#2F747F", marginLeft: "10px" }}
+                      />
+                      <input
+                        ref={inputRef}
+                        id="pac-input"
+                        className="form-input m-0"
+                        placeholder="Search location"
+                        style={{
+                          flex: "1 0 80%",
+                          padding: "8px",
+                          fontSize: "14px",
+                          border: "none",
+                          outline: "none",
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    ref={mapRef}
+                    id="map"
+                    style={{ height: "200px", width: "100%" }}
+                  ></div>
 
-        <button type="submit" style={{background:"#2F747F", color:"#fff"}}>
-          Save Property
-        </button>
-      </form>
-    </div>
+                  <div className="mt-3 w-100 d-flex gap-2 mb-2">
+                    <input
+                      ref={coordRef}
+                      placeholder="Enter Your Property Coordinates"
+                      className="form-control m-0"
+                      onChange={(e) => setCoordinateInput(e.target.value)}
+                    />
+                    <button
+                      className="btn btn-primary m-0 border-0"
+                      type="button"
+                      style={{ whiteSpace: "nowrap", background: "#6CBAAF" }}
+                      onClick={() => handleLatLngAuto(coordinateInput)}
+                    >
+                      Go
+                    </button>
+
+                    <button
+                      onClick={handleClear}
+                      type="button"
+                      className="btn btn-primary m-0 border-0"
+                      style={{ whiteSpace: "nowrap", background: "#B1D3C0" }}
+                    >
+                      <MdOutlineClose color="white" />
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={name} className="form-group">
+                <label
+                  style={{
+                    color: "#2F747F",
+                    fontWeight: "bold",
+                    display: "block",
+                    marginBottom: "5px",
+                  }}
+                >
+                  {name.replace(/([A-Z])/g, " $1").trim()}
+                  {requiredFields.includes(name) && (
+                    <span style={{ color: "red" }}> * </span>
+                  )}
+                </label>
+
+                {type === "select" ? (
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ flex: "1" }}>
+                      <label>
+                        <select
+                          name={name}
+                          value={formData[name] || ""}
+                          onChange={handleFieldChange}
+                          className="form-control"
+                          required={requiredFields.includes(name)}
+                          style={{ display: "none" }}
+                        >
+                          <option value="">
+                            Select {name.replace(/([A-Z])/g, " $1")}
+                          </option>
+                          {dataList[name]?.map((option, index) => (
+                            <option key={index} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleDropdown(name)}
+                          style={{
+                            cursor: "pointer",
+                            border: "1px solid #2F747F",
+                            padding: "10px",
+                            background: "#fff",
+                            borderRadius: "5px",
+                            width: "100%",
+                            textAlign: "left",
+                            color: "#2F747F",
+                          }}
+                        >
+                          <span style={{ marginRight: "10px" }}>
+                            {fieldIcons[name] || <FaHome />}
+                          </span>
+                          {formData[name] ||
+                            `Select ${name.replace(/([A-Z])/g, " $1")}`}
+                        </button>
+
+                        {renderDropdown(name)}
+                      </label>
+                    </div>
+                  </div>
+                ) : name === "description" ? (
+                  <div
+                    className="input-card p-0 rounded-1"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      border: "1px solid #2F747F",
+                      background: "#fff",
+                    }}
+                  >
+                    <span
+                      className="input-icon"
+                      style={{ color: "#2F747F", marginLeft: "10px" }}
+                    >
+                      {fieldIcons[name] || <FaEdit />}
+                    </span>
+                    <textarea
+                      name={name}
+                      value={formData[name] || ""}
+                      onChange={handleFieldChange}
+                      required={requiredFields.includes(name)}
+                      className="form-input m-0"
+                      placeholder={`Enter ${name.replace(/([A-Z])/g, " $1")}`}
+                      style={{
+                        flex: "1 0 70%",
+                        padding: "8px",
+                        fontSize: "14px",
+                        border: "none",
+                        outline: "none",
+                        minHeight: "100px",
+                        resize: "vertical",
+                        color: "#2F747F",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="input-card p-0 rounded-1"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        border: "1px solid #2F747F",
+                        background: "#fff",
+                      }}
+                    >
+                      <span
+                        className="input-icon"
+                        style={{ color: "#2F747F", marginLeft: "10px" }}
+                      >
+                        {fieldIcons[name] || <FaEdit />}
+                      </span>
+
+                      {name === "phoneNumber" && (
+                        <select
+                          name="phoneNumberCountryCode"
+                          value={formData.phoneNumberCountryCode || ""}
+                          onChange={handleFieldChange}
+                          className="form-control m-0"
+                          style={{
+                            width: "30%",
+                            padding: "8px",
+                            fontSize: "14px",
+                            border: "none",
+                            outline: "none",
+                          }}
+                        >
+                          <option value="">Select Country Code</option>
+                          {countryCodes.map((item, index) => (
+                            <option key={index} value={item.code}>
+                              {item.code} - {item.country}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+
+                      {name === "alternatePhone" && (
+                        <select
+                          name="alternatePhoneCountryCode"
+                          value={formData.alternatePhoneCountryCode || ""}
+                          onChange={handleFieldChange}
+                          className="form-control m-0"
+                          style={{
+                            width: "30%",
+                            padding: "8px",
+                            fontSize: "14px",
+                            border: "none",
+                            outline: "none",
+                          }}
+                        >
+                          <option value="">Select Country Code</option>
+                          {alternateCountryCodes.map((item, index) => (
+                            <option key={index} value={item.code}>
+                              {item.code} - {item.country}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+
+                      <input
+                        type={name === "email" ? "email" : "text"}
+                        name={name}
+                        value={formData[name] || ""}
+                        onChange={handleFieldChange}
+                        required={requiredFields.includes(name)}
+                        className="form-input m-0"
+                        placeholder={`Enter ${name.replace(/([A-Z])/g, " $1")}`}
+                        style={{
+                          flex: "1 0 70%",
+                          padding: "8px",
+                          fontSize: "14px",
+                          border: "none",
+                          outline: "none",
+                          color: "#2F747F",
+                        }}
+                      />
+                    </div>
+
+                    {name === "price" && priceInWords && (
+                      <p
+                        style={{
+                          fontSize: "14px",
+                          color: "#2F747F",
+                          marginTop: "5px",
+                        }}
+                      >
+                        {priceInWords}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
+
+          <button
+            type="submit"
+            style={{ background: "#2F747F", color: "#fff" }}
+          >
+            Save Property
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
 export default AddProperty;
-
-
