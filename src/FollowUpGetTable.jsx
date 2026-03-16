@@ -653,7 +653,7 @@ const FollowUpGetTable = () => {
             <thead className="sticky-top">
               <tr className="bg-gray-100 text-center">
                 <th>S.No</th>
-                <th>Rent ID</th>
+                <th>PPC ID</th>
                 <th>Property Status</th>
                 <th>Phone Number</th>
                 <th>Follow-Up Status</th>
@@ -678,7 +678,7 @@ const FollowUpGetTable = () => {
                   return (
                     <tr key={item._id} className="text-center">
                       <td>{index + 1}</td>
-                      <td>{item.rentId}</td>
+                      <td>{item.ppcId}</td>
                       <td>
                         <span
                           style={{
@@ -743,7 +743,7 @@ const FollowUpGetTable = () => {
             <thead className="sticky-top">
               <tr className="bg-gray-100 text-center">
                 <th>S.No</th>
-                <th>Rent ID</th>
+                <th>PPC ID</th>
                 <th>Property Status</th>
                 <th>Phone Number</th>
                 <th>Follow-Up Status</th>
@@ -762,11 +762,11 @@ const FollowUpGetTable = () => {
                 )
                 .map((item, index) => {
                   const { code, backgroundColor, textColor } =
-                    getPropertyStatusDisplay(item.rentId);
+                    getPropertyStatusDisplay(item.ppcId);
                   return (
                     <tr key={item._id} className="text-center">
                       <td>{index + 1}</td>
-                      <td>{item.rentId}</td>
+                      <td>{item.ppcId}</td>
                       <td>
                         <span
                           style={{
@@ -848,7 +848,7 @@ const FollowUpGetTable = () => {
             <thead className="sticky-top">
               <tr style={{ backgroundColor: "#f8d7da", color: "#721c24" }}>
                 <th>S.No</th>
-                <th>Rent ID</th>
+                <th>PPC ID</th>
                 <th>Property Status</th>
                 <th>Phone Number</th>
                 <th>Follow-Up Status</th>
@@ -877,7 +877,7 @@ const FollowUpGetTable = () => {
                       style={{ backgroundColor: "#fff5f5" }}
                     >
                       <td>{index + 1}</td>
-                      <td>{item.rentId}</td>
+                      <td>{item.ppcId}</td>
                       <td>
                         <span
                           style={{
