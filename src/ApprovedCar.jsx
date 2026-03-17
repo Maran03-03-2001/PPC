@@ -962,8 +962,8 @@ const ApprovedCar = () => {
                   <td>
                     <img
                       src={
-                        prop.photos && prop.photos.length > 0
-                          ? `http://localhost:5006/${prop.photos[0]}`
+                        prop.photos?.[0]
+                          ? `https://ppcpondy.com/PPC/${prop.photos[0].replace(/\\/g, "/")}`
                           : "https://d17r9yv50dox9q.cloudfront.net/car_gallery/default.jpg"
                       }
                       alt="Property"
