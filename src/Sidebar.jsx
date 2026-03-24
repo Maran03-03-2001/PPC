@@ -291,7 +291,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </NavLink>
             </li>
 
-<li className="p-0 mt-2">
+            <li className="p-0 mt-2">
               <NavLink
                 to="/dashboard/puc-car"
                 onClick={toggleSidebar}
@@ -329,7 +329,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </NavLink>
             </li>
           </ul>
-
 
           <li
             className="p-3 mt-2  text-white"
@@ -572,6 +571,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <ul
             className={openSection === "BuyerAssistant" ? "show" : "collapse "}
           >
+            <li className="p-0 mt-2">
+              <NavLink
+                to="/dashboard/get-matched-properties"
+                onClick={toggleSidebar}
+                className={({ isActive }) =>
+                  isActive ? "active-link rounded" : ""
+                }
+              >
+                <FaUser />
+                Matched Proprties
+              </NavLink>
+            </li>
             <li className="p-0 mt-2">
               <NavLink
                 to="/dashboard/add-buyer-assistance"
@@ -1516,19 +1527,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               >
                 <FaUsers />
                 Viewed Properties
-              </NavLink>
-            </li>
-
-            <li className="p-0 mt-2">
-              <NavLink
-                to="/dashboard/get-matched-properties"
-                onClick={toggleSidebar}
-                className={({ isActive }) =>
-                  isActive ? "active-link rounded" : ""
-                }
-              >
-                <FaUser />
-                Matched Proprties
               </NavLink>
             </li>
 

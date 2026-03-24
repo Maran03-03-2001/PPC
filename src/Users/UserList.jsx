@@ -319,10 +319,10 @@ const UserList = () => {
                     <tr>
                         <th>Sl</th>
                         <th>UserName</th>
-                        <th>Bycrpt Password</th>
-                        <th>Admin Set Password</th>
+                        {/* <th>Bycrpt Password</th> */}
+                        {/* <th>Admin Set Password</th> */}
                         <th>Role</th>
-                        <th>UserType</th>
+                        {/* <th>UserType</th> */}
                         <th>Office</th>
                         <th>Mobile Number</th>
                         <th>Edit / Delete</th>
@@ -333,10 +333,10 @@ const UserList = () => {
                         <tr key={user._id}>
                             <td>{index + 1}</td>
                             <td>{user.name}</td>
-                            <td>{user.password}</td>
-                            <td>{user.plainPassword}</td>
+                            {/* <td>{user.password}</td> */}
+                            {/* <td>{user.plainPassword}</td> */}
                             <td>{user.role}</td>
-                            <td>{user.userType}</td>
+                            {/* <td>{user.userType}</td> */}
                             <td>{user.office}</td>
                             <td>{user.mobile}</td>
                             <td>
