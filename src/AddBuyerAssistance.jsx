@@ -105,6 +105,7 @@ const PropertyAssistance = ({ existingData }) => {
 
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [areaSuggestions, setAreaSuggestions] = useState([]);
+  const [showAreaSuggestions, setShowAreaSuggestions] = useState(false);
   const cityTimeoutRef = useRef(null);
   const areaTimeoutRef = useRef(null);
 
@@ -121,18 +122,157 @@ const PropertyAssistance = ({ existingData }) => {
   const hoverStyle = {
     backgroundColor: "#017a6e",
   };
+
+  // Area to Pincode mapping for Pondicherry
+  const areaPincodeMap = {
+    Abishegapakkam: "605007",
+    Ariyankuppam: "605007",
+    Arumbarthapuram: "605110",
+    Bahour: "605101",
+    Bommaiyarpalayam: "605106",
+    Cathedral: "605001",
+    "Chinna Kalapet": "605014",
+    "Chinna Veerampatinam": "605007",
+    Dharmapuri: "605003",
+    "Dupleix Nagar": "605001",
+    Embalam: "605106",
+    "Heritage Town": "605001",
+    "Iyyanar Koil": "605013",
+    "Jipmer Campus": "605006",
+    Kadirkamam: "605009",
+    Kalapet: "605014",
+    Kanniakoil: "605010",
+    Karayamputhur: "605106",
+    Karuvadikuppam: "605008",
+    Katterikuppam: "605009",
+    Kirumampakkam: "605502",
+    Koodapakkam: "605502",
+    Korkadu: "605501",
+    Kottakuppam: "605104",
+    "Kottakuppam Puduthurai": "605007",
+    Kunichempet: "605006",
+    Kuruvinatham: "605007",
+    Kurusukuppam: "605012",
+    Lawspet: "605008",
+    Madukarai: "605107",
+    Madagadipet: "605107",
+    Manalipet: "605010",
+    Manapattu: "605105",
+    Mangalam: "605004",
+    Mannadipet: "605501",
+    Mettupalayam: "605009",
+    "MG Road": "605001",
+    "Mission Street": "605001",
+    Moolakulam: "605010",
+    Mudaliarpet: "605004",
+    Murungapakkam: "605004",
+    Nallambal: "605006",
+    "Natesan Nagar": "605005",
+    Nellithope: "605005",
+    "Olandai Keerapalayam": "605010",
+    Orleanpet: "605001",
+    Osudu: "605110",
+    Ousteri: "605009",
+    "Pillaiyarkuppam (Ariyankuppam)": "605007",
+    "Pillaiyarkuppam (Bahour)": "605101",
+    "Pondicherry University": "605014",
+    "Pudhu Nagar": "605010",
+    "Rainbow Nagar": "605011",
+    Reddiarpalayam: "605010",
+    "Sanjay Gandhi Nagar": "605005",
+    Saram: "605013",
+    Seedhankuppam: "605005",
+    Seliamedu: "605106",
+    "Sita Nagar": "605013",
+    "Solai Nagar": "605010",
+    "Sri Aurobindo Ashram": "605002",
+    "Subbaiah Salai": "605001",
+    Sultanpet: "605003",
+    Thavalakuppam: "605009",
+    Thengaithittu: "605004",
+    Thondamanatham: "605502",
+    Thirubuvanai: "605107",
+    Thirukanchi: "605009",
+    Thiruthani: "605006",
+    Vaithikuppam: "605012",
+    Vadhanur: "605111",
+    Veerampattinam: "605007",
+    Velrampet: "605004",
+    Villianur: "605110",
+    "White Town": "605001",
+  };
+
+  // Handle area input change with smart sorting (starting letters first)
+  const handleAreaInputChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, area: value }));
+
+    if (value.trim().length > 0) {
+      const allAreas = Object.keys(areaPincodeMap);
+      const lowerValue = value.toLowerCase();
+
+      // Areas that START with the typed letter (priority)
+      const startsWithFilter = allAreas.filter((a) =>
+        a.toLowerCase().startsWith(lowerValue),
+      );
+
+      // Areas that CONTAIN but don't start with the typed letter
+      const containsFilter = allAreas.filter(
+        (a) =>
+          !a.toLowerCase().startsWith(lowerValue) &&
+          a.toLowerCase().includes(lowerValue),
+      );
+
+      // Combine: starting first, then containing
+      const sortedSuggestions = [...startsWithFilter, ...containsFilter];
+
+      setAreaSuggestions(sortedSuggestions);
+      setShowAreaSuggestions(true); // Always show when typing
+    } else {
+      // Show all areas when input is empty
+      setAreaSuggestions(Object.keys(areaPincodeMap).sort());
+      setShowAreaSuggestions(true);
+    }
+  };
+
+  // Handle area selection from dropdown
+  const handleAreaSelect = (selectedArea) => {
+    setFormData((prev) => ({
+      ...prev,
+      area: selectedArea,
+      pinCode: areaPincodeMap[selectedArea] || prev.pinCode,
+    }));
+    setShowAreaSuggestions(false);
+    setAreaSuggestions([]);
+  };
+
+  // Handle area input focus
+  const handleAreaFocus = () => {
+    setAreaSuggestions(Object.keys(areaPincodeMap).sort());
+    setShowAreaSuggestions(true);
+  };
+
+  // Handle area input blur
+  const handleAreaBlur = () => {
+    // Delay to allow click on suggestion
+    setTimeout(() => {
+      setShowAreaSuggestions(false);
+    }, 250);
+  };
+
   const suggestionListStyle = {
     listStyle: "none",
     margin: 0,
-    padding: "5px",
+    padding: "8px 0",
     border: "1px solid #ccc",
     borderTop: "none",
-    maxHeight: "150px",
+    maxHeight: "200px",
     overflowY: "auto",
     position: "absolute",
     width: "100%",
     background: "#ffffff",
     zIndex: 1000,
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
   };
 
   const suggestionItemStyle = {
@@ -157,6 +297,7 @@ const PropertyAssistance = ({ existingData }) => {
     altPhoneNumber: "",
     city: "",
     area: "",
+    pinCode: "",
     loanInput: "",
     minPrice: "",
     maxPrice: "",
@@ -616,7 +757,10 @@ const PropertyAssistance = ({ existingData }) => {
 
     const errors = [];
 
-    if(!formData.phoneNumber) errors.push("Phone Number is required");
+    if (!formData.phoneNumber) errors.push("Phone Number is required");
+    if (!formData.totalArea) errors.push("Total Area is required");
+    if (!formData.area) errors.push("Area is required");
+    if (!formData.pinCode) errors.push("Pincode is required");
     if (!formData.state) errors.push("State is required");
     if (!formData.propertyType) errors.push("Property Type is required");
     if (!formData.propertyMode) errors.push("Property Mode is required");
@@ -1010,7 +1154,9 @@ const PropertyAssistance = ({ existingData }) => {
         </div>
 
         <div className="col-12 mb-3">
-          <label style={{ fontWeight: 600 }}>PhoneNumber<span style={{ color: "red" }}> * </span></label>
+          <label style={{ fontWeight: 600 }}>
+            PhoneNumber<span style={{ color: "red" }}> * </span>
+          </label>
           <div
             className="input-card p-0 rounded-1"
             style={{
@@ -1425,7 +1571,9 @@ const PropertyAssistance = ({ existingData }) => {
 
           {/* {Total Area} */}
           <div className="col-12 mb-3">
-            <label style={{ fontWeight: 600 }}>Total Area</label>
+            <label style={{ fontWeight: 600 }}>
+              Total Area<span style={{ color: "red" }}> * </span>
+            </label>
             <div
               className="input-card p-0 rounded-1"
               style={{
@@ -1695,7 +1843,7 @@ const PropertyAssistance = ({ existingData }) => {
         </div>
 
         <div className="col-12 mb-3" style={{ position: "relative" }}>
-          <label style={{ fontWeight: 600 }}>Area</label>
+          <label style={{ fontWeight: 600 }}>Area <span style={{ color: "red" }}>* </span></label>
           <div
             className="input-card p-0 rounded-1"
             style={{
@@ -1703,41 +1851,47 @@ const PropertyAssistance = ({ existingData }) => {
               alignItems: "center",
               border: "1px solid #2F747F",
               background: "#fff",
+              position: "relative",
             }}
           >
-            <FaCity style={{ color: "#2F747F", marginLeft: "10px" }} />
+            <MdLocationOn style={{ color: "#2F747F", marginLeft: "10px" }} />
             <input
               className="m-0"
               type="text"
               name="area"
               value={formData.area}
-              onChange={handleInputChanges}
-              placeholder="Enter Area"
+              onChange={handleAreaInputChange}
+              onFocus={handleAreaFocus}
+              onBlur={handleAreaBlur}
+              placeholder="Type or select Area..."
+              autoComplete="off"
               style={{
                 flex: "1",
-                padding: "8px",
+                padding: "10px 8px",
                 fontSize: "14px",
                 border: "none",
                 outline: "none",
               }}
             />
           </div>
-          {areaSuggestions.length > 0 && (
+          {showAreaSuggestions && areaSuggestions.length > 0 && (
             <ul style={suggestionListStyle}>
               {areaSuggestions.map((area, index) => (
                 <li
                   key={index}
                   style={{
                     ...suggestionItemStyle,
+                    padding: "10px 12px",
+                    fontSize: "14px",
                     ...(hoveredAreaIndex === index
                       ? suggestionItemHoverStyle
                       : {}),
                   }}
                   onMouseEnter={() => setHoveredAreaIndex(index)}
                   onMouseLeave={() => setHoveredAreaIndex(null)}
-                  onClick={() => {
-                    setFormData({ ...formData, area });
-                    setAreaSuggestions([]);
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent blur event from firing
+                    handleAreaSelect(area);
                   }}
                 >
                   {area}
@@ -1745,6 +1899,64 @@ const PropertyAssistance = ({ existingData }) => {
               ))}
             </ul>
           )}
+        </div>
+
+        {/* <div className="col-12 mb-3">
+          <label
+            style={{
+              fontSize: "14px",
+              fontWeight: "500",
+              color: "#2F747F",
+              marginBottom: "8px",
+              display: "block",
+            }}
+          >
+            Area <span style={{ color: "red" }}>*</span>
+          </label>
+        </div> */}
+
+        <div className="col-12 mb-3">
+          <label
+            style={{
+              flex: "1 0 80%",
+                  padding: "8px",
+                  fontSize: "14px",
+                  border: "none",
+                  outline: "none",
+                  fontWeight: 400,
+                  fontbold: 500,
+            }}
+          >
+            Pincode <span style={{ color: "red" }}> *</span>
+          </label>
+          <div
+            className="input-card p-0 rounded-1"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              border: "1px solid #2F747F",
+              background: "#fff",
+              position: "relative",
+            }}
+          >
+            <TbMapPinCode style={{ color: "#2F747F", marginLeft: "10px" }} />
+            <input
+              className="m-0"
+              type="text"
+              name="pinCode"
+              value={formData.pinCode}
+              onChange={handleInputChange}
+              placeholder="Enter Pincode"
+              style={{
+                flex: "1",
+                padding: "10px 8px",
+                fontSize: "14px",
+                border: "none",
+                outline: "none",
+                backgroundColor: "#fff",
+              }}
+            />
+          </div>
         </div>
 
         <div className="col-12 mb-3">
