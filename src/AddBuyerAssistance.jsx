@@ -616,11 +616,30 @@ const PropertyAssistance = ({ existingData }) => {
 
     const errors = [];
 
+    if(!formData.phoneNumber) errors.push("Phone Number is required");
     if (!formData.state) errors.push("State is required");
     if (!formData.propertyType) errors.push("Property Type is required");
     if (!formData.propertyMode) errors.push("Property Mode is required");
     if (!formData.minPrice) errors.push("Min Price is required");
     if (!formData.maxPrice) errors.push("Max Price is required");
+
+    // Validate that Max Price is greater than or equal to Min Price
+    if (formData.minPrice && formData.maxPrice) {
+      const minPriceNum = parseFloat(
+        formData.minPrice.toString().replace(/[^\d.-]/g, ""),
+      );
+      const maxPriceNum = parseFloat(
+        formData.maxPrice.toString().replace(/[^\d.-]/g, ""),
+      );
+
+      if (
+        !isNaN(minPriceNum) &&
+        !isNaN(maxPriceNum) &&
+        maxPriceNum < minPriceNum
+      ) {
+        errors.push("Max Price must be greater than or equal to Min Price");
+      }
+    }
 
     if (errors.length > 0) {
       alert(errors.join("\n"));
@@ -665,10 +684,33 @@ const PropertyAssistance = ({ existingData }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Validate Owner Name - only allow letters and spaces
+    if (name === "baName") {
+      const validatedValue = value.replace(/[^a-zA-Z\s]/g, "");
+      setFormData((prevState) => ({ ...prevState, [name]: validatedValue }));
+      return;
+    }
+
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
+
+    // Validate City and Area - only allow letters and spaces
+    if (name === "city" || name === "area") {
+      const validatedValue = value.replace(/[^a-zA-Z\s]/g, "");
+      setFormData((prev) => ({ ...prev, [name]: validatedValue }));
+
+      // Fetch suggestions
+      if (name === "city") {
+        fetchCitySuggestions(validatedValue);
+      } else if (name === "area") {
+        fetchAreaSuggestions(validatedValue);
+      }
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "city") {
@@ -968,7 +1010,7 @@ const PropertyAssistance = ({ existingData }) => {
         </div>
 
         <div className="col-12 mb-3">
-          <label style={{ fontWeight: 600 }}>PhoneNumber</label>
+          <label style={{ fontWeight: 600 }}>PhoneNumber<span style={{ color: "red" }}> * </span></label>
           <div
             className="input-card p-0 rounded-1"
             style={{
@@ -1093,7 +1135,9 @@ const PropertyAssistance = ({ existingData }) => {
 
           <div className="form-group">
             <label style={{ width: "100%" }}>
-              <label>propertyType</label>
+              <label>
+                propertyType<span style={{ color: "red" }}> * </span>
+              </label>
 
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ flex: "1" }}>
