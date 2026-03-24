@@ -138,7 +138,10 @@ const DeletedProperties = () => {
     const { ppcId, phoneNumber, status, startDate, endDate } = filters;
 
     const matchPpcId =
-      !ppcId || property.ppcId.toLowerCase().includes(ppcId.toLowerCase());
+      !ppcId ||
+      String(property.ppcId || "")
+        .toLowerCase()
+        .includes(ppcId.toLowerCase());
     const matchPhone =
       !phoneNumber || String(property.phoneNumber || "").includes(phoneNumber);
     const matchStatus = !status || property.status === status;
