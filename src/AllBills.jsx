@@ -1,21 +1,18 @@
-
-
-
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AllBillsTable = () => {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-const [filters, setFilters] = useState({
-  billNo: '',
-  billDate: '',
-  ppId: '',
-  planName: ''
-});
+  const [filters, setFilters] = useState({
+    billNo: "",
+    billDate: "",
+    ppId: "",
+    planName: "",
+  });
 
   useEffect(() => {
     fetchBills();
@@ -23,32 +20,34 @@ const [filters, setFilters] = useState({
 
   const fetchBills = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/bills`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/bills`,
+      );
       if (response.data.success) {
         setBills(response.data.data);
       } else {
-        throw new Error('Failed to fetch bills');
+        throw new Error("Failed to fetch bills");
       }
     } catch (err) {
-      setError(err.message || 'Error fetching bills');
+      setError(err.message || "Error fetching bills");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCreateBill = (type, ppcId) => {
-    if (type === 'Bill' && ppcId) {
+    if (type === "Bill" && ppcId) {
       navigate(`/dashboard/edit-bill/${ppcId}`);
     }
   };
   const handleFilterChange = (e) => {
-  const { name, value } = e.target;
-  setFilters((prev) => ({ ...prev, [name]: value }));
-};
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
 
-const handleResetFilters = () => {
-  setFilters({ billNo: '', billDate: '', ppId: '', planName: '' });
-};
+  const handleResetFilters = () => {
+    setFilters({ billNo: "", billDate: "", ppId: "", planName: "" });
+  };
   const tableRef = useRef();
 
   const handlePrint = () => {
@@ -73,73 +72,88 @@ const handleResetFilters = () => {
     printWindow.document.close();
     printWindow.print();
   };
-const filteredBills = bills.filter((bill) => {
-  return (
-    (!filters.billNo || bill.billNo?.toLowerCase().includes(filters.billNo.toLowerCase())) &&
-    (!filters.ppId || bill.ppId?.toLowerCase().includes(filters.ppId.toLowerCase())) &&
-    (!filters.planName || bill.planName?.toLowerCase().includes(filters.planName.toLowerCase())) &&
-    (!filters.billDate || bill.billDate === filters.billDate)
-  );
-});
+  const filteredBills = bills.filter((bill) => {
+    return (
+      (!filters.billNo ||
+        bill.billNo?.toLowerCase().includes(filters.billNo.toLowerCase())) &&
+      (!filters.ppId ||
+        bill.ppId?.toLowerCase().includes(filters.ppId.toLowerCase())) &&
+      (!filters.planName ||
+        bill.planName
+          ?.toLowerCase()
+          .includes(filters.planName.toLowerCase())) &&
+      (!filters.billDate || bill.billDate === filters.billDate)
+    );
+  });
 
   if (loading) return <p>Loading bills...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
   return (
     <div className="container mt-4">
-      <div     style={{ 
-  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
-  padding: '20px', 
-  backgroundColor: '#fff' 
-}} className="row mb-3">
-  <div className="col-md-2">
-    <input
-      type="text"
-      name="billNo"
-      value={filters.billNo}
-      onChange={handleFilterChange}
-      className="form-control"
-      placeholder="Bill No"
-    />
-  </div>
-  <div className="col-md-2">
-    <input
-      type="text"
-      name="ppId"
-      value={filters.ppId}
-      onChange={handleFilterChange}
-      className="form-control"
-      placeholder="PP ID"
-    />
-  </div>
-  <div className="col-md-2">
-    <input
-      type="text"
-      name="planName"
-      value={filters.planName}
-      onChange={handleFilterChange}
-      className="form-control"
-      placeholder="Plan Name"
-    />
-  </div>
-  <div className="col-md-2">
-    <input
-      type="date"
-      name="billDate"
-      value={filters.billDate}
-      onChange={handleFilterChange}
-      className="form-control"
-    />
-  </div>
-  <div className="col-md-2">
-    <button className="btn btn-secondary w-100" onClick={handleResetFilters}>
-      Reset
-    </button>
-  </div>
-</div>
-             <button className="btn btn-secondary mb-3 mt-3" style={{background:"tomato"}} onClick={handlePrint}>
-  Print
-</button>
+      <div
+        style={{
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+          padding: "20px",
+          backgroundColor: "#fff",
+        }}
+        className="row mb-3"
+      >
+        <div className="col-md-2">
+          <input
+            type="text"
+            name="billNo"
+            value={filters.billNo}
+            onChange={handleFilterChange}
+            className="form-control"
+            placeholder="Bill No"
+          />
+        </div>
+        <div className="col-md-2">
+          <input
+            type="text"
+            name="ppId"
+            value={filters.ppId}
+            onChange={handleFilterChange}
+            className="form-control"
+            placeholder="PP ID"
+          />
+        </div>
+        <div className="col-md-2">
+          <input
+            type="text"
+            name="planName"
+            value={filters.planName}
+            onChange={handleFilterChange}
+            className="form-control"
+            placeholder="Plan Name"
+          />
+        </div>
+        <div className="col-md-2">
+          <input
+            type="date"
+            name="billDate"
+            value={filters.billDate}
+            onChange={handleFilterChange}
+            className="form-control"
+          />
+        </div>
+        <div className="col-md-2">
+          <button
+            className="btn btn-secondary w-100"
+            onClick={handleResetFilters}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+      <button
+        className="btn btn-secondary mb-3 mt-3"
+        style={{ background: "tomato" }}
+        onClick={handlePrint}
+      >
+        Print
+      </button>
       <h2 className="mb-3">All Bills</h2>
       <div className="table-responsive" ref={tableRef}>
         <table className="table table-bordered table-striped table-hover">
@@ -154,6 +168,7 @@ const filteredBills = bills.filter((bill) => {
               <th>PP ID</th>
               <th>Owner Phone</th>
               <th>Payment Type</th>
+              <th>Plan Type</th>
               <th>Plan Name</th>
               <th>Bill Amount</th>
               <th>Validity (days)</th>
@@ -170,7 +185,9 @@ const filteredBills = bills.filter((bill) => {
           <tbody>
             {filteredBills.length === 0 ? (
               <tr>
-                <td colSpan="20" className="text-center">No bills found</td>
+                <td colSpan="20" className="text-center">
+                  No bills found
+                </td>
               </tr>
             ) : (
               filteredBills.map((bill, index) => (
@@ -184,6 +201,7 @@ const filteredBills = bills.filter((bill) => {
                   <td>{bill.ppId}</td>
                   <td>{bill.ownerPhone}</td>
                   <td>{bill.paymentType}</td>
+                  <td>{bill.paymentType === "Free" ? "Free" : "Paid"}</td>
                   <td>{bill.planName}</td>
                   <td>{bill.billAmount}</td>
                   <td>{bill.validity}</td>
@@ -197,7 +215,7 @@ const filteredBills = bills.filter((bill) => {
                   <td>
                     <button
                       className="btn btn-sm btn-primary"
-                      onClick={() => handleCreateBill('Bill', bill.ppId)}
+                      onClick={() => handleCreateBill("Bill", bill.ppId)}
                     >
                       Edit Bill
                     </button>

@@ -182,6 +182,11 @@ const LoginReportTable = () => {
     );
   });
 
+  // Deduplicate by mobile number, keeping only the latest record for each phone
+  const deduplicatedUsers = Array.from(
+    new Map(filteredUsers.map((user) => [user.phone, user])).values(),
+  ).sort((a, b) => new Date(b.loginDate) - new Date(a.loginDate));
+
   const reduxAdminName = useSelector((state) => state.admin.name);
   const reduxAdminRole = useSelector((state) => state.admin.role);
 
@@ -540,7 +545,7 @@ const LoginReportTable = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((item, index) => (
+            {deduplicatedUsers.map((item, index) => (
               <tr key={item._id}>
                 <td className="border px-4 py-2">{index + 1}</td>
                 <td className="border px-4 py-2">{item.phone}</td>
@@ -682,7 +687,7 @@ const LoginReportTable = () => {
                 </td>
               </tr>
             ))}
-            {filteredUsers.length === 0 && (
+            {deduplicatedUsers.length === 0 && (
               <tr>
                 <td className="border px-4 py-2 text-center" colSpan="21">
                   No records found.

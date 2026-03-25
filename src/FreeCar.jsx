@@ -1,18 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -331,6 +316,7 @@ const handleSearch = () => {
       <th>No. of Ads</th>
       <th>Status</th>
       <th>Plan Name</th>
+      <th>Payment Type</th>
        <th>Follow Up</th>
       <th>Bill No</th>
       <th>Set Feature</th>
@@ -374,7 +360,7 @@ const handleSearch = () => {
           <td>{ item.user.adsCount}</td>
           <td>{property.status}</td>
           <td>{item.user.planName}</td>
-     
+          <td>Free</td>
                               <td>{item.user.adminName}</td>
           <td>{item.user.billNo}</td>
           <td>{property.featureStatus}</td>
@@ -410,23 +396,3 @@ const handleSearch = () => {
 };
 
 export default FreePlansWithProperties;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
