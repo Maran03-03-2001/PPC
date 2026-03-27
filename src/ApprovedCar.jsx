@@ -997,7 +997,7 @@ const taggedFree = freeData.map((item) => ({ ...item, _paymentType: "Free" }));
               <th>Print </th>
             </tr>
           </thead>
-          <tbody>
+                    <tbody>
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan="45" className="text-center">
@@ -1005,22 +1005,15 @@ const taggedFree = freeData.map((item) => ({ ...item, _paymentType: "Free" }));
                 </td>
               </tr>
             ) : (
-<<<<<<< HEAD
               filtered.map((prop, idx) => {
-                // ── NEW: resolve Bill No and Bill Type from freePlansBillMap ──
-                // Stringify both sides to avoid number/string key mismatch
-                const freeBillInfo = freePlansBillMap[String(prop.ppcId)];
-const resolvedBillNo   = freeBillInfo?.billNo   || prop.bill_number  || "N/A";
-const resolvedBillType = freeBillInfo?.billType  || prop.billing_type || "N/A";
-const resolvedPlanName = freeBillInfo?.planName  || prop.planName     || "N/A";
-const resolvedPlanType = freeBillInfo?.planType  || "N/A";
-                // ──────────────────────────────────────────────────────────────
+                const freeBillInfo = freePlansBillMap[String(prop.ppcId)] || {};
+                const resolvedBillNo = freeBillInfo.billNo || prop.bill_number || "N/A";
+                const resolvedBillType = freeBillInfo.billType || prop.billing_type || "N/A";
+                const resolvedPlanName = freeBillInfo.planName || prop.planName || "N/A";
+                const resolvedPlanType = freeBillInfo.planType || prop.packageType || "N/A";
 
                 return (
-                  <tr
-                    key={prop._id}
-                    className={prop.isDeleted ? "table-danger" : ""}
-                  >
+                  <tr key={prop._id} className={prop.isDeleted ? "table-danger" : ""}>
                     <td>{idx + 1}</td>
                     <td>
                       <img
@@ -1030,11 +1023,7 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                             : "https://d17r9yv50dox9q.cloudfront.net/car_gallery/default.jpg"
                         }
                         alt="Property"
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          objectFit: "cover",
-                        }}
+                        style={{ width: "50px", height: "50px", objectFit: "cover" }}
                       />
                     </td>
                     <td
@@ -1042,10 +1031,7 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                       style={{ cursor: "pointer" }}
                       onClick={() =>
                         navigate("/dashboard/detail", {
-                          state: {
-                            ppcId: prop.ppcId,
-                            phoneNumber: prop.phoneNumber,
-                          },
+                          state: { ppcId: prop.ppcId, phoneNumber: prop.phoneNumber },
                         })
                       }
                     >
@@ -1056,9 +1042,7 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                     </td>
                     <td
                       className={`sticky-col sticky-col-2 ${
-                        prop.otpStatus !== "verified" || !prop.isVerifiedUser
-                          ? "text-danger"
-                          : ""
+                        prop.otpStatus !== "verified" || !prop.isVerifiedUser ? "text-danger" : ""
                       }`}
                     >
                       {prop.phoneNumber}
@@ -1070,27 +1054,19 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                     <td>{prop.price}</td>
                     <td>{prop.city}</td>
                     <td>{prop.createdBy}</td>
-                    <td>{new Date(prop.createdAt).toLocaleDateString()}</td>
-                    <td>{new Date(prop.updatedAt).toLocaleDateString()}</td>
+                    <td>{prop.createdAt ? new Date(prop.createdAt).toLocaleDateString() : ""}</td>
+                    <td>{prop.updatedAt ? new Date(prop.updatedAt).toLocaleDateString() : ""}</td>
                     <td>{prop.required}</td>
                     <td>{prop.status}</td>
                     <td>{prop.setPpcId ? "True" : "False"}</td>
-                    <td>
-                      {prop.setPpcIdAssignedAt
-                        ? new Date(prop.setPpcIdAssignedAt).toLocaleDateString()
-                        : "N/A"}
-                    </td>
+                    <td>{prop.setPpcIdAssignedAt ? new Date(prop.setPpcIdAssignedAt).toLocaleDateString() : "N/A"}</td>
                     <td>{prop.assignedPhoneNumber || "N/A"}</td>
 
-                    {/* ── UPDATED: Bill No from freePlansBillMap ── */}
                     <td>{resolvedBillNo}</td>
-
-                    {/* ── UPDATED: Bill Type derived from Bill No prefix ── */}
                     <td>{resolvedBillType}</td>
-
-                   <td>{resolvedPlanName}</td>
-<td>{resolvedPlanType}</td>
-                    <td>{new Date(prop.planCreatedAt).toLocaleDateString()}</td>
+                    <td>{resolvedPlanName}</td>
+                    <td>{resolvedPlanType}</td>
+                    <td>{prop.planCreatedAt ? new Date(prop.planCreatedAt).toLocaleDateString() : ""}</td>
                     <td>{prop.planExpiryDate}</td>
                     <td>{prop.paymentData?.payustatususer}</td>
                     <td>{prop.paymentData?.txnid}</td>
@@ -1099,18 +1075,10 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                     <td>{prop.paymentData?.email}</td>
                     <td>{prop.paymentData?.payUdate}</td>
                     <td>{prop.deletionReason || "-"}</td>
-                    <td>
-                      {prop.deletionDate
-                        ? new Date(prop.deletionDate).toLocaleString()
-                        : "-"}
-                    </td>
+                    <td>{prop.deletionDate ? new Date(prop.deletionDate).toLocaleString() : "-"}</td>
                     <td>
                       {prop.isDeleted ? (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleUndo(prop.ppcId)}
-                        >
+                        <Button variant="secondary" size="sm" onClick={() => handleUndo(prop.ppcId)}>
                           Undo
                         </Button>
                       ) : (
@@ -1121,10 +1089,7 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                             className="ms-2"
                             onClick={() =>
                               navigate("/dashboard/edit-property", {
-                                state: {
-                                  ppcId: prop.ppcId,
-                                  phoneNumber: prop.phoneNumber,
-                                },
+                                state: { ppcId: prop.ppcId, phoneNumber: prop.phoneNumber },
                               })
                             }
                           >
@@ -1134,57 +1099,34 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                             variant="danger"
                             size="sm"
                             className="ms-2 mt-2"
-                            onClick={() =>
-                              handleDeleteClick(prop.ppcId, prop.phoneNumber)
-                            }
+                            onClick={() => handleDeleteClick(prop.ppcId, prop.phoneNumber)}
                           >
                             <MdDeleteForever />
                           </Button>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            className="mt-2"
-                            onClick={() => handlePermanentDelete(prop.ppcId)}
-                          >
+                          <Button variant="danger" size="sm" className="mt-2" onClick={() => handlePermanentDelete(prop.ppcId)}>
                             <MdDeleteForever /> Permanent
                           </Button>
                         </>
                       )}
                     </td>
                     <td>
-                      <button
-                        className="text-primary"
-                        onClick={() => handleCreateBill("Bill", prop.ppcId)}
-                      >
+                      <button className="text-primary" onClick={() => handleCreateBill("Bill", prop.ppcId)}>
                         Edit Bill
                       </button>
                     </td>
                     <td>{prop.featureStatus}</td>
                     <td>
-                      <Button
-                        variant="info"
-                        size="sm"
-                        onClick={() => handleMoveToClick(prop)}
-                      >
+                      <Button variant="info" size="sm" onClick={() => handleMoveToClick(prop)}>
                         Move To
                       </Button>
                     </td>
                     <td>
                       <Button
-                        variant={
-                          prop.featureStatus === "yes" ? "danger" : "success"
-                        }
+                        variant={prop.featureStatus === "yes" ? "danger" : "success"}
                         size="sm"
-                        onClick={() =>
-                          handleFeatureStatusChange(
-                            prop.ppcId,
-                            prop.featureStatus,
-                          )
-                        }
+                        onClick={() => handleFeatureStatusChange(prop.ppcId, prop.featureStatus)}
                       >
-                        {prop.featureStatus === "yes"
-                          ? "Set to No"
-                          : "Set to Yes"}
+                        {prop.featureStatus === "yes" ? "Set to No" : "Set to Yes"}
                       </Button>
                     </td>
                     <td>{prop.followUpAdminName}</td>
@@ -1192,198 +1134,13 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
                     <td>{prop.validity}</td>
                     <td>{prop.billExpiryDate}</td>
                     <td>
-=======
-              filtered.map((prop, idx) => (
-                <tr
-                  key={prop._id}
-                  className={prop.isDeleted ? "table-danger" : ""}
-                >
-                  <td>{idx + 1}</td>
-                  <td>
-                    <img
-                      src={
-                        prop.photos && prop.photos.length > 0
-                          ? `http://localhost:5006/${prop.photos[0]}`
-                          : "https://d17r9yv50dox9q.cloudfront.net/car_gallery/default.jpg"
-                      }
-                      alt="Property"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </td>
-                  <td
-                    className="sticky-col sticky-col-1"
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      navigate("/dashboard/detail", {
-                        state: {
-                          ppcId: prop.ppcId,
-                          phoneNumber: prop.phoneNumber,
-                        },
-                      })
-                    }
-                  >
-                    {prop.ppcId}
-                  </td>
-                  <td>
-                    <FaEye /> {prop.views}
-                  </td>
-                  <td
-                    className={`sticky-col sticky-col-2 ${
-                      prop.otpStatus !== "verified" || !prop.isVerifiedUser
-                        ? "text-danger"
-                        : ""
-                    }`}
-                  >
-                    {prop.phoneNumber}
-                  </td>
-                  <td>{prop.otpStatus}</td>
-                  <td>{prop.isVerifiedUser ? "True" : "False"}</td>
-                  <td>{prop.propertyType}</td>
-                  <td>{prop.propertyMode}</td>
-                  <td>{prop.price}</td>
-                  <td>{prop.city}</td>
-                  <td>{prop.createdBy}</td>
-                  <td>{new Date(prop.createdAt).toLocaleDateString()}</td>
-                  <td>{new Date(prop.updatedAt).toLocaleDateString()}</td>
-                  <td>{prop.required}</td>
-                  <td>{prop.status}</td>
-                  <td>{prop.setPpcId ? "True" : "False"}</td>
-                  <td>
-                    {prop.setPpcIdAssignedAt
-                      ? new Date(prop.setPpcIdAssignedAt).toLocaleDateString()
-                      : "N/A"}
-                  </td>
-                  <td>{prop.assignedPhoneNumber || "N/A"}</td>
-                  <td>{prop.bill_number || "N/A"}</td>
-                  <td>{prop.billing_type || "N/A"}</td>
-                  <td>{prop.planName}</td>
-                  <td>{prop.packageType}</td>
-                  <td>{new Date(prop.planCreatedAt).toLocaleDateString()}</td>
-                  <td>{prop.planExpiryDate}</td>
-                  <td>{prop.paymentData?.payustatususer}</td>
-                  <td>{prop.paymentData?.txnid}</td>
-                  <td>{prop.paymentData?.amount}</td>
-                  <td>{prop.paymentData?.firstname}</td>
-                  <td>{prop.paymentData?.email}</td>
-                  <td>{prop.paymentData?.payUdate}</td>
-                  <td>{prop.deletionReason || "-"}</td>
-                  <td>
-                    {prop.deletionDate
-                      ? new Date(prop.deletionDate).toLocaleString()
-                      : "-"}
-                  </td>
-                  <td>
-                    {prop.isDeleted ? (
->>>>>>> efaa114246bdef9aa3d69ae44fb201ae6fecf173
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="ms-2"
-                        onClick={() => handlePrint(prop)}
-                      >
+                      <Button variant="secondary" size="sm" className="ms-2" onClick={() => handlePrint(prop)}>
                         Print
                       </Button>
-<<<<<<< HEAD
                     </td>
                   </tr>
                 );
               })
-=======
-                    ) : (
-                      <>
-                        <Button
-                          variant="info"
-                          size="sm"
-                          className="ms-2"
-                          onClick={() =>
-                            navigate("/dashboard/edit-property", {
-                              state: {
-                                ppcId: prop.ppcId,
-                                phoneNumber: prop.phoneNumber,
-                              },
-                            })
-                          }
-                        >
-                          <FaEdit />
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          className="ms-2 mt-2"
-                          onClick={() =>
-                            handleDeleteClick(prop.ppcId, prop.phoneNumber)
-                          }
-                        >
-                          <MdDeleteForever />
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          className="mt-2"
-                          onClick={() => handlePermanentDelete(prop.ppcId)}
-                        >
-                          <MdDeleteForever /> Permanent
-                        </Button>
-                      </>
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="text-primary"
-                      onClick={() => handleCreateBill("Bill", prop.ppcId)}
-                    >
-                      Edit Bill
-                    </button>
-                  </td>
-                  <td>{prop.featureStatus}</td>
-                  <td>
-                    <Button
-                      variant="info"
-                      size="sm"
-                      onClick={() => handleMoveToClick(prop)}
-                    >
-                      Move To
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      variant={
-                        prop.featureStatus === "yes" ? "danger" : "success"
-                      }
-                      size="sm"
-                      onClick={() =>
-                        handleFeatureStatusChange(
-                          prop.ppcId,
-                          prop.featureStatus,
-                        )
-                      }
-                    >
-                      {prop.featureStatus === "yes"
-                        ? "Set to No"
-                        : "Set to Yes"}
-                    </Button>
-                  </td>
-                  <td>{prop.followUpAdminName}</td>
-                  <td>{prop.billDate}</td>
-                  <td>{prop.validity}</td>
-                  <td>{prop.billExpiryDate}</td>
-                  <td>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="ms-2"
-                      onClick={() => handlePrint(prop)}
-                    >
-                      Print
-                    </Button>
-                  </td>
-                </tr>
-              ))
->>>>>>> efaa114246bdef9aa3d69ae44fb201ae6fecf173
             )}
           </tbody>
         </Table>
@@ -1457,3 +1214,4 @@ const resolvedPlanType = freeBillInfo?.planType  || "N/A";
 };
 
 export default ApprovedCar;
+

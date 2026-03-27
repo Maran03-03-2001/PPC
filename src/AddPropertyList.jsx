@@ -20,6 +20,7 @@ const AddPropertyList = () => {
 
   const [excelFile, setExcelFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [showAllDetails, setShowAllDetails] = useState(false);
 
   const [filters, setFilters] = useState({
     ppcId: "",
@@ -577,6 +578,34 @@ const AddPropertyList = () => {
         >
           Showing: {filteredProperties.length}
         </button>
+        <label
+          className="d-flex align-items-center mb-0"
+          style={{
+            marginLeft: "auto", // 👈 THIS LINE moves it to right
+            cursor: "pointer",
+            gap: "8px",
+            fontSize: "14px",
+            fontWeight: "500",
+            color: "#333",
+            padding: "6px 12px",
+            border: "1px solid #dee2e6",
+            borderRadius: "8px",
+            backgroundColor: "#f8f9fa",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={showAllDetails}
+            onChange={(e) => setShowAllDetails(e.target.checked)}
+            className="form-check-input m-0"
+            style={{
+              cursor: "pointer",
+              width: "16px",
+              height: "16px",
+            }}
+          />
+          <span>Show All Details</span>
+        </label>
       </div>
 
       {filteredProperties.length > 0 ? (
@@ -595,48 +624,41 @@ const AddPropertyList = () => {
                 <th className="sticky-col sticky-col-2">Phone Number</th>
                 <th>Otp Status</th>
                 <th>Direct Verified User</th>
-                <th>Property Mode</th>
-                <th>Property Type</th>
-                <th>Price</th>
-                <th>City</th>
-                <th>Created By</th>
-                <th>Mandatory</th>
-                <th>Plan Name</th>
-
-                <th>Created At</th>
-                <th>Updated At</th>
-                <th>No.Of.ADS </th>
-                <th>Feature Property</th>
-
-                <th>Admin Office</th>
-                <th>FollowUp Admin Name</th>
-                <th>Plan Name</th>
-                <th>Plan Type</th>
-                <th>Plan Created</th>
-                <th>Plan UpdatedAt</th>
-
-                <th>Plan Expiry</th>
-                <th>PayU Status</th>
-                <th>Transaction ID</th>
-                <th>Plan Amount</th>
-
-                <th>Plan CreatedBy</th>
-
-                <th>Email</th>
-                <th>payU Date</th>
-
-                <th>Bill No</th>
-                <th>Bill Date</th>
-                <th>Validity</th>
-                <th>Bill Expiry Date</th>
-
-                {/* Features Property Status Column - Displays and allows toggling the feature status (yes/no) of properties */}
-                {/* <th>Features Property Status</th> */}
+                {showAllDetails && (
+                  <>
+                    <th>Property Mode</th>
+                    <th>Property Type</th>
+                    <th>Price</th>
+                    <th>City</th>
+                    <th>Created By</th>
+                    <th>Mandatory</th>
+                    <th>Plan Name</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th>No.Of.ADS </th>
+                    <th>Feature Property</th>
+                    <th>Admin Office</th>
+                    <th>FollowUp Admin Name</th>
+                    <th>Plan Name</th>
+                    <th>Plan Type</th>
+                    <th>Plan Created</th>
+                    <th>Plan UpdatedAt</th>
+                    <th>Plan Expiry</th>
+                    <th>PayU Status</th>
+                    <th>Transaction ID</th>
+                    <th>Plan Amount</th>
+                    <th>Plan CreatedBy</th>
+                    <th>Email</th>
+                    <th>payU Date</th>
+                    <th>Bill No</th>
+                    <th>Bill Date</th>
+                    <th>Validity</th>
+                    <th>Bill Expiry Date</th>
+                  </>
+                )}
                 <th>Status</th>
                 <th>Actions</th>
                 <th>Active OR Pending</th>
-                {/* Permanent Delete Column - Allows admin to permanently delete a property record from the database */}
-                {/* <th>Permenent Delete</th> */}
               </tr>
             </thead>
 
@@ -685,59 +707,60 @@ const AddPropertyList = () => {
                   </td>
                   <td>{property.otpStatus}</td>
                   <td>{property.isVerifiedUser ? "True" : "False"}</td>
-                  <td>{property.propertyMode}</td>
-                  <td>{property.propertyType}</td>
-                  <td>{property.price}</td>
-                  <td>{property.city}</td>
-
-                  <td>{property.createdBy || "N/A"}</td>
-                  <td>{property.required}</td>
-                  <td>{property.planName || "N/A"}</td>
-
-                  <td>
-                    {property.createdAt
-                      ? new Date(property.createdAt).toLocaleString()
-                      : "N/A"}
-                  </td>
-                  <td>
-                    {property.updatedAt
-                      ? new Date(property.updatedAt).toLocaleString()
-                      : "N/A"}
-                  </td>
-                  <td> {property.adsCount} </td>
-                  <td>{property.featureStatus}</td>
-
-                  <td>{property.adminOffice}</td>
-                  <td>{property.followUpAdminName}</td>
-                  <td>{property.paymentInfo?.planName}</td>
-                  <td>{property.paymentInfo?.productinfo}</td>
-                  <td>
-                    {new Date(
-                      property.paymentInfo?.createdAt,
-                    ).toLocaleDateString()}
-                  </td>
-                  <td>
-                    {new Date(
-                      property.paymentInfo?.updatedAt,
-                    ).toLocaleDateString()}
-                  </td>
-
-                  <td>{property.planExpiryDate}</td>
-                  <td>{property.paymentInfo?.payustatususer}</td>
-                  <td>{property.paymentInfo?.txnid}</td>
-                  <td>{property.paymentInfo?.amount}</td>
-                  <td>{property.paymentInfo?.firstname}</td>
-                  <td>{property.paymentInfo?.email}</td>
-                  <td>
-                    {property.paymentInfo?.payUdate
-                      ? new Date(property.paymentInfo.payUdate).toLocaleString()
-                      : "N/A"}
-                  </td>
-
-                  <td>{property.billNo}</td>
-                  <td>{property.billDate}</td>
-                  <td>{property.validity}</td>
-                  <td>{property.billExpiryDate}</td>
+                  {showAllDetails && (
+                    <>
+                      <td>{property.propertyMode}</td>
+                      <td>{property.propertyType}</td>
+                      <td>{property.price}</td>
+                      <td>{property.city}</td>
+                      <td>{property.createdBy || "N/A"}</td>
+                      <td>{property.required}</td>
+                      <td>{property.planName || "N/A"}</td>
+                      <td>
+                        {property.createdAt
+                          ? new Date(property.createdAt).toLocaleString()
+                          : "N/A"}
+                      </td>
+                      <td>
+                        {property.updatedAt
+                          ? new Date(property.updatedAt).toLocaleString()
+                          : "N/A"}
+                      </td>
+                      <td> {property.adsCount} </td>
+                      <td>{property.featureStatus}</td>
+                      <td>{property.adminOffice}</td>
+                      <td>{property.followUpAdminName}</td>
+                      <td>{property.paymentInfo?.planName}</td>
+                      <td>{property.paymentInfo?.productinfo}</td>
+                      <td>
+                        {new Date(
+                          property.paymentInfo?.createdAt,
+                        ).toLocaleDateString()}
+                      </td>
+                      <td>
+                        {new Date(
+                          property.paymentInfo?.updatedAt,
+                        ).toLocaleDateString()}
+                      </td>
+                      <td>{property.planExpiryDate}</td>
+                      <td>{property.paymentInfo?.payustatususer}</td>
+                      <td>{property.paymentInfo?.txnid}</td>
+                      <td>{property.paymentInfo?.amount}</td>
+                      <td>{property.paymentInfo?.firstname}</td>
+                      <td>{property.paymentInfo?.email}</td>
+                      <td>
+                        {property.paymentInfo?.payUdate
+                          ? new Date(
+                              property.paymentInfo.payUdate,
+                            ).toLocaleString()
+                          : "N/A"}
+                      </td>
+                      <td>{property.billNo}</td>
+                      <td>{property.billDate}</td>
+                      <td>{property.validity}</td>
+                      <td>{property.billExpiryDate}</td>
+                    </>
+                  )}
 
                   {/* Feature Status Toggle Button */}
                   {/* <td>

@@ -1,9 +1,9 @@
- 
-import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import moment from 'moment';
-import { Routes, Route, Router } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import moment from "moment";
+import { Routes, Route, Router } from "react-router-dom";
+import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import LoginReport from "./LoginReport";
 import AdminReport from "./AdminReport";
@@ -86,101 +86,101 @@ import OfficeList from "./Office/OfficeList";
 import BuyerPlan from "./BuyerPlans/BuyerPlan";
 import PendingAssistant from "./PendingAssistant";
 import BaPaidBill from "./BaPaidBill";
-import AddPlan from './PricingPlan/AddPlan';
-import EditProperty from './EditProperty';
-import Detail from './Detail';
-import AdminSetForm from './DataAddAdmin/AdminSetForm';
-import InterestTables from './Detail/InterestTables';
-import AddPropertyList from './AddPropertyList';
-import FavoriteTable from './Detail/FavoriteTables';
-import FavoriteTables from './Detail/FavoriteTables';
-import NeedHelpLeadTable from './HelpLoanLead';
-import ContactTables from './Detail/ContactTables';
-import SoldOutTables from './Detail/SoldOutTables';
-import ReportPropertyTables from './Detail/ReportPropertyTables';
-import NeedHelpTables from './Detail/NeedHelpTables';
-import FavoriteRemoved from './Detail/ShortListRemovedTable';
+import AddPlan from "./PricingPlan/AddPlan";
+import EditProperty from "./EditProperty";
+import Detail from "./Detail";
+import AdminSetForm from "./DataAddAdmin/AdminSetForm";
+import InterestTables from "./Detail/InterestTables";
+import AddPropertyList from "./AddPropertyList";
+import FavoriteTable from "./Detail/FavoriteTables";
+import FavoriteTables from "./Detail/FavoriteTables";
+import NeedHelpLeadTable from "./HelpLoanLead";
+import ContactTables from "./Detail/ContactTables";
+import SoldOutTables from "./Detail/SoldOutTables";
+import ReportPropertyTables from "./Detail/ReportPropertyTables";
+import NeedHelpTables from "./Detail/NeedHelpTables";
+import FavoriteRemoved from "./Detail/ShortListRemovedTable";
 
-import GetBuyerAssistance from './GetBuyerAssistance';
-import TextEditor from './TextEditer';
-import MatchedPropertyTable from './Detail/MatchedPropertyTable';
-import MatchedList from './Detail/MatchedList';
-import FeaturedProperty from './FeaturedProperty';
-import ViewedProperties from './Detail/ViewedProperty';
-import NotificationForm from './NotificationSend';
-import ProfileTable from './GetUserProfile';
-import GetUserCalledList from './GetUserCalledList';
-import AddProps from './AddProps';
-import axios from 'axios';
-import DeletedProperties from './DeletedProperties';
-import PyProperty from './Detail/PyProperty';
-import UserViewsTable from './AdminViewsTable';
-import CreateFollowUp from './CreateFollowUp';
-import FollowUpGetTable from './FollowUpGetTable';
-import DeveloperProperty from './DeveloperProperty'; 
-import CreateBill from './CreateBill';
-import GetBillDatas from './GetBillDatas';
-import AddBuyerAssistance from './AddBuyerAssistance';
-import ViewBuyerAssistance from './ViewBuyerAssistance';
-import EditBill from './EditBill';
-import PostedByProperty from './PostedByProperty';
-import PromotorProperty from './PromotorProperty';
-import BuyerAssistanceActive from './BuyerAssistanceActive';
-import SetPPCID from './SetPPCID';
-import EditBuyerAssistance from './EditBuyerAssistance';
-import AddressTable from './AddressTable';
-import CreateBuyerFollowUp from './CreateBuyerFollowUp';
-import FollowUpBuyerGetTable from './FollowUpBuyerGetTable';
-import GetAllPropertyStatics from './GetAllPropertyStatics';
-import GetAllBuyerStatics from './GetAllBuyerStatics';
-import GetAllUsageStatics from './GetAllUsageStatics';
-import WithOutPropertyUser from './WithOutPropertyUser';
-import AllViewsDatas from './AllViewsDatas';
-import WithOutUserStatics from './WithOutStatics';
-import WithoutProperty30DaysUser from './Without30days';
-import WithUsersTable from './WithAllUser';
-import LoginDirectVerifyUser from './LoginDirectVerifyUser';
-import UploadImages from './UpLoadImagesGroom';
-import UpLoadImagesGroom from './UpLoadImagesGroom';
-import UpLoadImagesBride from './UploadImagesBride';
-import DirectLogoutUsers from './DirectLogoutUsers';
-import RemovePlanPhoneNumber from './RemovePlanPhoneNumber';
-import PaymentPaidFailed from './PayuDatas/PaymentPaidFailed';
-import PaymentPaidSuccess from './PayuDatas/PaymentPaidSuccess';
-import PaymentPaidPayNow from './PayuDatas/PaymentPaidPayNow';
-import PaymentPaidPayLater from './PayuDatas/PaymentPaidPayLater';
-import PayuBuyerPaid from './PayuBuyerPayments/PayuBuyerPaid';
-import PayuBuyerPayFailed from './PayuBuyerPayments/PayuBuyerPayFailed';
-import PayuBuyerPaynow from './PayuBuyerPayments/PayuBuyerPaynow';
-import PayuBuyerPaylater from './PayuBuyerPayments/PayuBuyerPaylater';
-import AllBillsTable from './AllBills';
-import CreateBuyerBill from './CreateBuyerBill';
-import EditBuyerBill from './EditBuyerBill';
-import AllBuyerBills from './AllBuyerBills';
-import GroomImageClickTable from './UserClickGroomImages';
-import BrideImageClickTable from './UserClickBrideImages';
-import LoginUserDatas from './LoginUsersDatas';
-import LoginSeparateUser from './LoginSeparateUser';
+import GetBuyerAssistance from "./GetBuyerAssistance";
+import TextEditor from "./TextEditer";
+import MatchedPropertyTable from "./Detail/MatchedPropertyTable";
+import MatchedList from "./Detail/MatchedList";
+import FeaturedProperty from "./FeaturedProperty";
+import ViewedProperties from "./Detail/ViewedProperty";
+import NotificationForm from "./NotificationSend";
+import ProfileTable from "./GetUserProfile";
+import GetUserCalledList from "./GetUserCalledList";
+import AddProps from "./AddProps";
+import axios from "axios";
+import DeletedProperties from "./DeletedProperties";
+import PyProperty from "./Detail/PyProperty";
+import UserViewsTable from "./AdminViewsTable";
+import CreateFollowUp from "./CreateFollowUp";
+import FollowUpGetTable from "./FollowUpGetTable";
+import DeveloperProperty from "./DeveloperProperty";
+import CreateBill from "./CreateBill";
+import GetBillDatas from "./GetBillDatas";
+import AddBuyerAssistance from "./AddBuyerAssistance";
+import ViewBuyerAssistance from "./ViewBuyerAssistance";
+import EditBill from "./EditBill";
+import PostedByProperty from "./PostedByProperty";
+import PromotorProperty from "./PromotorProperty";
+import BuyerAssistanceActive from "./BuyerAssistanceActive";
+import SetPPCID from "./SetPPCID";
+import EditBuyerAssistance from "./EditBuyerAssistance";
+import AddressTable from "./AddressTable";
+import CreateBuyerFollowUp from "./CreateBuyerFollowUp";
+import FollowUpBuyerGetTable from "./FollowUpBuyerGetTable";
+import GetAllPropertyStatics from "./GetAllPropertyStatics";
+import GetAllBuyerStatics from "./GetAllBuyerStatics";
+import GetAllUsageStatics from "./GetAllUsageStatics";
+import WithOutPropertyUser from "./WithOutPropertyUser";
+import AllViewsDatas from "./AllViewsDatas";
+import WithOutUserStatics from "./WithOutStatics";
+import WithoutProperty30DaysUser from "./Without30days";
+import WithUsersTable from "./WithAllUser";
+import LoginDirectVerifyUser from "./LoginDirectVerifyUser";
+import UploadImages from "./UpLoadImagesGroom";
+import UpLoadImagesGroom from "./UpLoadImagesGroom";
+import UpLoadImagesBride from "./UploadImagesBride";
+import DirectLogoutUsers from "./DirectLogoutUsers";
+import RemovePlanPhoneNumber from "./RemovePlanPhoneNumber";
+import PaymentPaidFailed from "./PayuDatas/PaymentPaidFailed";
+import PaymentPaidSuccess from "./PayuDatas/PaymentPaidSuccess";
+import PaymentPaidPayNow from "./PayuDatas/PaymentPaidPayNow";
+import PaymentPaidPayLater from "./PayuDatas/PaymentPaidPayLater";
+import PayuBuyerPaid from "./PayuBuyerPayments/PayuBuyerPaid";
+import AddMarketingProperty from "./AddMarketingproperty";
+import PayuBuyerPayFailed from "./PayuBuyerPayments/PayuBuyerPayFailed";
+import PayuBuyerPaynow from "./PayuBuyerPayments/PayuBuyerPaynow";
+import PayuBuyerPaylater from "./PayuBuyerPayments/PayuBuyerPaylater";
+import AllBillsTable from "./AllBills";
+import CreateBuyerBill from "./CreateBuyerBill";
+import EditBuyerBill from "./EditBuyerBill";
+import AllBuyerBills from "./AllBuyerBills";
+import GroomImageClickTable from "./UserClickGroomImages";
+import BrideImageClickTable from "./UserClickBrideImages";
+import LoginUserDatas from "./LoginUsersDatas";
+import LoginSeparateUser from "./LoginSeparateUser";
 
-import SetOnDemandPrice from './ApplyOnDemand';
-import AddressRequestsTable from './AllAddressRequests';
-import BuyerAssistViewsTable from './BuyerListUserViewed';
-import PropertyStatusTable from './ShowAllProperties';
+import SetOnDemandPrice from "./ApplyOnDemand";
+import AddressRequestsTable from "./AllAddressRequests";
+import BuyerAssistViewsTable from "./BuyerListUserViewed";
+import PropertyStatusTable from "./ShowAllProperties";
 
-import ContactUseage from './ContactUsage';
-import PPCIdStatics from './PPCIdStatics';
-import CalledListDatas from './Detail/CalledListDatas';
-import AdminPropertyMessages from './SetPropertyMessage';
-import SalePropertyViewsUser from './SalePropertyViewsUser';
-import UpLoadImagesAds from './UploadAdsImage';
-import UpLoadDetailAds from './UploadDetailAds';
-import CallExperienceList from './GetCalledExpirence';
-import SummaryDashboard from './Subscriber';
-import PropertyPaymentDailyReport from './PropertyPaymentDailyReport';
-
+import ContactUseage from "./ContactUsage";
+import PPCIdStatics from "./PPCIdStatics";
+import CalledListDatas from "./Detail/CalledListDatas";
+import AdminPropertyMessages from "./SetPropertyMessage";
+import SalePropertyViewsUser from "./SalePropertyViewsUser";
+import UpLoadImagesAds from "./UploadAdsImage";
+import UpLoadDetailAds from "./UploadDetailAds";
+import CallExperienceList from "./GetCalledExpirence";
+import SummaryDashboard from "./Subscriber";
+import PropertyPaymentDailyReport from "./PropertyPaymentDailyReport";
 
 const routes = [
-  { path: "/loginreport", element: <LoginReport /> }, 
+  { path: "/loginreport", element: <LoginReport /> },
   { path: "/adminreport", element: <AdminReport /> },
   { path: "/plan", element: <AddPlan /> },
   { path: "/buyerplan", element: <BuyerPlan /> },
@@ -306,72 +306,82 @@ const routes = [
   { path: "/all-buyer-statics", element: <GetAllBuyerStatics /> },
   { path: "/all-usage-statics", element: <GetAllUsageStatics /> },
   { path: "/without-property-user", element: <WithOutPropertyUser /> },
-    { path: "/all-views-datas", element: <AllViewsDatas /> },
+  { path: "/all-views-datas", element: <AllViewsDatas /> },
   { path: "/without-all-statics", element: <WithOutUserStatics /> },
-  { path: "/without-30-days-user", element: < WithoutProperty30DaysUser /> },
-  { path: "/all-user-datas", element: < WithUsersTable /> },
-    { path: "/login-direct-user", element: < LoginDirectVerifyUser /> },
-    { path: "/upload-images-groom", element: < UpLoadImagesGroom /> },
-        { path: "/upload-images-bride", element: < UpLoadImagesBride /> },
-    { path: "/logout-direct-user", element: < DirectLogoutUsers /> },
-    { path: "/remove-plan-phone", element: < RemovePlanPhoneNumber /> },
-    { path: "/payment-failed", element: < PaymentPaidFailed /> },
-        { path: "/payment-success", element: < PaymentPaidSuccess /> },
-    { path: "/payment-paynow", element: < PaymentPaidPayNow /> },
-    { path: "/payment-paylater", element: < PaymentPaidPayLater /> },
+  { path: "/without-30-days-user", element: <WithoutProperty30DaysUser /> },
+  { path: "/all-user-datas", element: <WithUsersTable /> },
+  { path: "/login-direct-user", element: <LoginDirectVerifyUser /> },
+  { path: "/upload-images-groom", element: <UpLoadImagesGroom /> },
+  { path: "/upload-images-bride", element: <UpLoadImagesBride /> },
+  { path: "/logout-direct-user", element: <DirectLogoutUsers /> },
+  { path: "/remove-plan-phone", element: <RemovePlanPhoneNumber /> },
+  { path: "/payment-failed", element: <PaymentPaidFailed /> },
+  { path: "/payment-success", element: <PaymentPaidSuccess /> },
+  { path: "/payment-paynow", element: <PaymentPaidPayNow /> },
+  { path: "/payment-paylater", element: <PaymentPaidPayLater /> },
 
-  { path: "/payment-failed-buyer", element: < PayuBuyerPayFailed /> },
-        { path: "/payment-success-buyer", element: < PayuBuyerPaid /> },
-    { path: "/payment-paynow-buyer", element: < PayuBuyerPaynow /> },
-    { path: "/payment-paylater-buyer", element: < PayuBuyerPaylater /> },
-    { path: "/all-bills", element: < AllBillsTable /> },
-    { path: "/buyer-create-bill", element: < CreateBuyerBill /> },
-    { path: "/edit-buyer-bill/:ba_id", element: < EditBuyerBill /> },
-    { path: "/all-buyer-bills", element: < AllBuyerBills /> },
-        { path: "/call-exprience", element: < CallExperienceList /> },
+  { path: "/payment-failed-buyer", element: <PayuBuyerPayFailed /> },
+  { path: "/payment-success-buyer", element: <PayuBuyerPaid /> },
+  { path: "/payment-paynow-buyer", element: <PayuBuyerPaynow /> },
+  { path: "/payment-paylater-buyer", element: <PayuBuyerPaylater /> },
+  { path: "/all-bills", element: <AllBillsTable /> },
+  { path: "/buyer-create-bill", element: <CreateBuyerBill /> },
+  { path: "/edit-buyer-bill/:ba_id", element: <EditBuyerBill /> },
+  { path: "/all-buyer-bills", element: <AllBuyerBills /> },
+  { path: "/call-exprience", element: <CallExperienceList /> },
 
+  { path: "/groom-click-datas", element: <GroomImageClickTable /> },
+  { path: "/bride-click-datas", element: <BrideImageClickTable /> },
+  { path: "/upload-images-ads", element: <UpLoadImagesAds /> },
+  { path: "/upload-images-ads-detail", element: <UpLoadDetailAds /> },
 
-    { path: "/groom-click-datas", element: < GroomImageClickTable /> },
-    { path: "/bride-click-datas", element: < BrideImageClickTable /> },
-        { path: "/upload-images-ads", element: < UpLoadImagesAds /> },
-                { path: "/upload-images-ads-detail", element: < UpLoadDetailAds /> },
+  { path: "/login-user-datas", element: <LoginUserDatas /> },
 
+  { path: "/separate-login-user", element: <LoginSeparateUser /> },
+  { path: "/apply-on-demand", element: <SetOnDemandPrice /> },
+  { path: "/get-all-address-request", element: <AddressRequestsTable /> },
+  { path: "/get-all-buyerlist-viewed", element: <BuyerAssistViewsTable /> },
+  { path: "/get-all-property-datas", element: <PropertyStatusTable /> },
+  { path: "/contact-usage", element: <ContactUseage /> },
+  { path: "/ppcid-statics", element: <PPCIdStatics /> },
+  { path: "/called-list-datas", element: <CalledListDatas /> },
+  { path: "/set-property-message", element: <AdminPropertyMessages /> },
 
-        { path: "/login-user-datas", element: < LoginUserDatas /> },
-
-                { path: "/separate-login-user", element: < LoginSeparateUser /> },
-                { path: "/apply-on-demand", element: < SetOnDemandPrice /> },
-                { path: "/get-all-address-request", element: < AddressRequestsTable /> },
-                { path: "/get-all-buyerlist-viewed", element: < BuyerAssistViewsTable /> },
-                { path: "/get-all-property-datas", element: < PropertyStatusTable /> },
-                { path: "/contact-usage", element: < ContactUseage /> },
-                { path: "/ppcid-statics", element: < PPCIdStatics /> },
-                                { path: "/called-list-datas", element: < CalledListDatas /> },
-                                { path: "/set-property-message", element: < AdminPropertyMessages /> },
-
-                                { path: "/sale-property", element: < SalePropertyViewsUser /> },
-                                { path: "/daily-report", element: < SummaryDashboard /> },
-                                { path: "/payment-daily-report", element: < PropertyPaymentDailyReport /> },
-
-
+  { path: "/sale-property", element: <SalePropertyViewsUser /> },
+  { path: "/daily-report", element: <SummaryDashboard /> },
+  { path: "/payment-daily-report", element: <PropertyPaymentDailyReport /> },
+  {
+    path: "/add-property-marketing",
+    element: <AddMarketingProperty isPublic={true} />,
+  },
 ];
 
-
 const Dashboard = () => {
-
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
+  // Hide sidebar and navbar for public property form
+  const isPublicForm = location.pathname.includes("/add-property-marketing");
+
   return (
     <div className="p-2" style={{ background: "#F0F2F5" }}>
       <div className="dashboard-container">
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="main-content" style={{ background: "#F0F2F5" }}>
-          <Navbar toggleSidebar={toggleSidebar} />
- 
+        {!isPublicForm && (
+          <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        )}
+        <div
+          className="main-content"
+          style={{
+            background: "#F0F2F5",
+            width: isPublicForm ? "100%" : "auto",
+          }}
+        >
+          {!isPublicForm && <Navbar toggleSidebar={toggleSidebar} />}
+
           <Routes>
             {routes.map((route, index) => (
               <Route key={index} path={route.path} element={route.element} />
@@ -384,11 +394,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-
-
-
