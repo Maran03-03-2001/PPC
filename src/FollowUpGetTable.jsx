@@ -56,6 +56,15 @@ const FollowUpGetTable = () => {
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}/followup-list`,
       );
+      console.log("Followup data:", res.data.data);
+      // Debug: check ppcId values in followup data
+      if (res.data.data && Array.isArray(res.data.data)) {
+        res.data.data.forEach((item, index) => {
+          console.log(
+            `Followup ${index}: ppcId=${item.ppcId}, rentId=${item.rentId}`,
+          );
+        });
+      }
       setFollowups(res.data.data);
     } catch (error) {
       console.error("Error fetching all follow-up data:", error);
@@ -85,12 +94,25 @@ const FollowUpGetTable = () => {
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}/fetch-alls-datas-all`,
       );
+      console.log("Properties API response:", res.data);
       const propertiesMap = {};
-      if (res.data.users && Array.isArray(res.data.users)) {
-        res.data.users.forEach((property) => {
-          propertiesMap[property.rentId] = property.status;
+      const users = res.data.users || res.data || [];
+      if (Array.isArray(users)) {
+        users.forEach((property) => {
+          if (property.ppcId && property.status) {
+            propertiesMap[property.ppcId] = property.status;
+            console.log(
+              "Property:",
+              property.ppcId,
+              "Status:",
+              property.status,
+            );
+          }
         });
+      } else {
+        console.log("Users data is not an array:", users);
       }
+      console.log("Properties map:", propertiesMap);
       setProperties(propertiesMap);
     } catch (error) {
       console.error("Error fetching properties:", error);
@@ -124,6 +146,11 @@ const FollowUpGetTable = () => {
     fetchProperties();
     fetchPendingProperties();
   }, []);
+
+  // Debug: log when properties change
+  useEffect(() => {
+    console.log("Properties state updated:", properties);
+  }, [properties]);
 
   // Date range filter
   const handleDateFilter = () => {
@@ -452,25 +479,38 @@ const FollowUpGetTable = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Get property status code and color based on rentId
-  const getPropertyStatusDisplay = (rentId) => {
+  // Get property status code and color based on rentId or entire item object
+  // Mapping: active → AP, complete → PA, incomplete → PE, delete → DE
+  const getPropertyStatusDisplay = (itemOrId) => {
     let code = "ES";
     let backgroundColor = "#000000";
     let textColor = "#ffffff";
 
-    // Check if rentId is in pending properties first
-    const rentIdString = String(rentId);
-    if (pendingRentIds.includes(rentIdString)) {
-      code = "PE";
-      backgroundColor = "#007BFF";
-      textColor = "#ffffff";
-      return { code, backgroundColor, textColor };
-    }
+    // Extract ID from item object - use ppcId since that's what followup data has
+    const ppcId = itemOrId?.ppcId || itemOrId?.rentId || itemOrId;
+    const ppcIdString = String(ppcId || "");
 
-    const status = properties[rentId];
+    // Debug: check if properties map is populated
+    console.log("Properties map keys:", Object.keys(properties));
+    console.log("Looking up ppcId:", ppcIdString, "rentId:", itemOrId?.rentId);
+    console.log("Status from ppcId lookup:", properties[ppcIdString]);
+    console.log(
+      "Status from rentId lookup:",
+      properties[String(itemOrId?.rentId || "")],
+    );
+
+    // Lookup status from properties map using ppcId or rentId
+    const status =
+      properties[ppcIdString] || properties[String(itemOrId?.rentId || "")];
+    console.log("Final status found:", status);
 
     if (status) {
       switch (status.toLowerCase()) {
+        case "active":
+          code = "AP";
+          backgroundColor = "#28A745";
+          textColor = "#ffffff";
+          break;
         case "complete":
           code = "PA";
           backgroundColor = "#FFC107";
@@ -479,11 +519,6 @@ const FollowUpGetTable = () => {
         case "incomplete":
           code = "PE";
           backgroundColor = "#007BFF";
-          textColor = "#ffffff";
-          break;
-        case "active":
-          code = "AP";
-          backgroundColor = "#28A745";
           textColor = "#ffffff";
           break;
         case "delete":
@@ -635,7 +670,7 @@ const FollowUpGetTable = () => {
       </div>
 
       {/* Data Table */}
-      {loading ? (
+      {loading || Object.keys(properties).length === 0 ? (
         <p>Loading...</p>
       ) : followups.length === 0 ? (
         <p>No follow-up records found.</p>
@@ -674,7 +709,7 @@ const FollowUpGetTable = () => {
                 )
                 .map((item, index) => {
                   const { code, backgroundColor, textColor } =
-                    getPropertyStatusDisplay(item.rentId);
+                    getPropertyStatusDisplay(item);
                   return (
                     <tr key={item._id} className="text-center">
                       <td>{index + 1}</td>
@@ -762,7 +797,7 @@ const FollowUpGetTable = () => {
                 )
                 .map((item, index) => {
                   const { code, backgroundColor, textColor } =
-                    getPropertyStatusDisplay(item.ppcId);
+                    getPropertyStatusDisplay(item);
                   return (
                     <tr key={item._id} className="text-center">
                       <td>{index + 1}</td>
@@ -869,7 +904,7 @@ const FollowUpGetTable = () => {
                 )
                 .map((item, index) => {
                   const { code, backgroundColor, textColor } =
-                    getPropertyStatusDisplay(item.rentId);
+                    getPropertyStatusDisplay(item);
                   return (
                     <tr
                       key={item._id}
